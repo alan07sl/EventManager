@@ -10,7 +10,7 @@ Usar la aplicación basada en spring boot que esta corriendo en Heroku, aplicaci
 Hecha para proveer documentación out of the box respecto de la API.
 
 ### La aplicación es gestionada y fue configurada para utilizar CI/CD Travis-Heroku
-Para ver el **Estado actual de CI** por favor entre a la siguiente **[URL](https://travis-ci.org/alan07sl/event-manager)**
+Para ver el **Estado actual de CI** por favor entre a la siguiente **[URL](https://travis-ci.org/alan07sl/EventManager)**
 
 ### Unit testing
 - Los **Tests unitarios** fueron hechos bajo las mejores prácticas, como utilizar assertThat de modo que al fallar, los mensajes sean más explicitos, usando mocks para dependencias y web requests.
