@@ -6,7 +6,7 @@ addons:
     token: $SONAR_TOKEN
 script:
 - ./mvnw clean install -B
-- ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar org.jacoco:report coveralls:report
+- ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar org.jacoco:jacoco-maven-plugin:prepare-agent:report coveralls:report
 
 deploy:
   provider: heroku
