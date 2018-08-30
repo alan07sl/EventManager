@@ -1,16 +1,16 @@
 package com.utn.tacs.eventmanager.controllers;
 
+import com.utn.tacs.eventmanager.controllers.dto.UserDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController(value = "/users")
+@RestController
+@RequestMapping("/users")
 public class UserController {
 
     @PostMapping
-    public @ResponseBody ResponseEntity<Object> createUser() {
+    public ResponseEntity<Object> createUser(@RequestBody UserDTO user) {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
