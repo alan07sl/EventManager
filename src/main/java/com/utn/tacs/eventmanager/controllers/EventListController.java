@@ -21,6 +21,11 @@ public class EventListController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("/{eventListId}")
+    public ResponseEntity<Object> modifyEvent(@PathVariable Integer eventListId, @RequestBody EventListDTO eventList) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @DeleteMapping("/{eventListId}")
     public ResponseEntity<Object> deleteEventList(@PathVariable Integer eventListId) {
         return new ResponseEntity<>(HttpStatus.OK);
