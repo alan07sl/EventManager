@@ -29,7 +29,7 @@ public class EventListControllerTest {
 	private MockMvc mockMvc;
 
     @Test
-    public void shouldCreateEvent() throws Exception {
+    public void shouldCreateEventList() throws Exception {
         EventListDTO eventList = new EventListDTO();
         eventList.setName("MyList");
 
