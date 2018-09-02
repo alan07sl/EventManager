@@ -79,7 +79,7 @@ public class EventListControllerTest {
                 .andExpect(jsonPath("$.prev").isString())
                 .andExpect(jsonPath("$.result").isArray())
                 .andExpect(jsonPath("$.result[:1].id").value(result1.getId()))
-                .andExpect(jsonPath("$.result[:1].name").value(result1.getName()));;
+                .andExpect(jsonPath("$.result[:1].name").value(result1.getName()));
 
 	}
 
