@@ -79,9 +79,12 @@
 								<limit implementation="org.jacoco.report.check.Limit">
 									<counter>INSTRUCTION</counter>
 									<value>COVEREDRATIO</value>
-									<minimum>0.5</minimum>
+									<minimum>0.7</minimum>
 								</limit>
 							</limits>
+							<excludes>
+								<exclude>com.utn.tacs.eventmanager.EventManagerApplication</exclude>
+							</excludes>
 						</rule>
 					</rules>
 				</configuration>
