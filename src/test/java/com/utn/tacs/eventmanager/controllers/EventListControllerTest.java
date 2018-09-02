@@ -1,10 +1,8 @@
-package com.utn.tacs.eventmanager.controller;
+package com.utn.tacs.eventmanager.controllers;
 
 import com.google.gson.Gson;
-import com.utn.tacs.eventmanager.controllers.EventListController;
 import com.utn.tacs.eventmanager.controllers.dto.EventDTO;
 import com.utn.tacs.eventmanager.controllers.dto.EventListDTO;
-import com.utn.tacs.eventmanager.controllers.dto.UserDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
