@@ -15,7 +15,7 @@ public class EventController {
 	@GetMapping("/{eventId}/users")
 	public ResponseEntity<EventUsersDTO> getEventUsers(@PathVariable Integer eventId) {
 		EventUsersDTO usersInterested = new EventUsersDTO();
-		usersInterested.setAmmount(1);
+		usersInterested.setAmount(1);
 		return new ResponseEntity<>(usersInterested,HttpStatus.OK);
 	}
 

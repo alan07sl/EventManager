@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class EventUsersDTO {
 
-	private Integer ammount;
+	private Integer amount;
 }

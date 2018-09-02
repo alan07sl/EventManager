@@ -22,7 +22,7 @@ public class EventControllerTest {
 	public void shouldGet() throws Exception {
 
 		mockMvc.perform(get("/events/1/users"))
-				.andExpect(jsonPath("$.ammount").isNumber())
+				.andExpect(jsonPath("$.amount").isNumber())
 				.andExpect(status().isOk());
 	}
 
