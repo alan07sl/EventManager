@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 public class SessionController {
 
     @PostMapping
-    public ResponseEntity<Object> createSession(@RequestBody UserDTO user) {
+    public ResponseEntity<SessionDTO> createSession(@RequestBody UserDTO user) {
         SessionDTO session = new SessionDTO();
         session.setToken("TOKEN");
         return new ResponseEntity<>(session,HttpStatus.CREATED);

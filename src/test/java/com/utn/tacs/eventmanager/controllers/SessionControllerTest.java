@@ -1,8 +1,6 @@
-package com.utn.tacs.eventmanager.controller;
+package com.utn.tacs.eventmanager.controllers;
 
 import com.google.gson.Gson;
-import com.utn.tacs.eventmanager.controllers.SessionController;
-import com.utn.tacs.eventmanager.controllers.dto.SessionDTO;
 import com.utn.tacs.eventmanager.controllers.dto.UserDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,14 +9,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
