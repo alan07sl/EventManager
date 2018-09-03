@@ -36,6 +36,7 @@ public class EventListController {
            return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/events/match?{eventListId}&{eventListId2}")
     public ResponseEntity<Object> getCommonEvents(@PathVariable Integer eventListId,@PathVariable Integer eventListId2) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
