@@ -30,4 +30,14 @@ public class EventListController {
     public ResponseEntity<Object> deleteEventList(@PathVariable Integer eventListId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/events")
+    public ResponseEntity<Object> getEvents() {
+           return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<Object> getCommonEvents(@PathVariable Integer eventListId,@PathVariable Integer eventListId2) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
