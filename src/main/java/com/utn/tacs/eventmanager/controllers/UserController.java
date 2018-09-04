@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserDTO> getUsers(
+    public ResponseEntity<ListDTO<UserDTO>> getUsers(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size ){
@@ -31,11 +31,13 @@ public class UserController {
         list.setPageNumber(page);
         list.setResultCount(100);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(list,HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getById(@PathVariable String id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+        UserDTO user = new UserDTO();
+        user.setUsername("UserTest");
+        return new ResponseEntity<>(user,HttpStatus.OK);
     }
 }
