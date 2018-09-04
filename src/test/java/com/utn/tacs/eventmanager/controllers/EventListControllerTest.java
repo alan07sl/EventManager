@@ -65,22 +65,14 @@ public class EventListControllerTest {
 
 	@Test
 	public void shouldGetEvents() throws Exception {
-
-		EventDTO events = new EventDTO();
-		events.setName("Events");
-
 		mockMvc.perform(get("/events_lists/events")).andExpect(status().isOk());
 
 	}
 	@Test
 	public void shouldGetCommonsEvents() throws Exception {
-		EventDTO CommonEvents = new EventDTO();
-		CommonEvents.setName("CommonEvents");
-
-		mockMvc.perform(get("/events_lists/match?eventListId=1&eventListId=2"))
+		mockMvc.perform(get("/events_lists/match?eventListId1=1&eventListId2=2"))
 				.andExpect(status().isOk())
-				.andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
-				.andExpect(jsonPath("$.content")).value(CommonEvents);
+				.andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"));
 
 	}
 }
