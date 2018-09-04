@@ -3,6 +3,8 @@ package com.utn.tacs.eventmanager.controllers;
 import com.google.gson.Gson;
 import com.utn.tacs.eventmanager.controllers.dto.EventDTO;
 import com.utn.tacs.eventmanager.controllers.dto.EventListDTO;
+import com.utn.tacs.eventmanager.controllers.dto.ListDTO;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -61,13 +66,28 @@ public class EventListControllerTest {
     }
 
 	@Test
-	public void shouldGetEventsFromEventList() throws Exception {
+	public void shouldSearchEventList() throws Exception {
+        EventListDTO result1 = new EventListDTO();
+        result1.setName("r1");
+        result1.setId(1);
 
-		mockMvc.perform(get("/events_lists/1/events"))
-				.andExpect(jsonPath("$").isArray())
-				.andExpect(jsonPath("$.[:1].id").value(1))
-				.andExpect(jsonPath("$.[1:2].id").value(2))
-				.andExpect(status().isOk());
+		mockMvc.perform(get("/events_lists")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.pageNumber").isNumber())
+                .andExpect(jsonPath("$.pageCount").isNumber())
+                .andExpect(jsonPath("$.resultCount").isNumber())
+                .andExpect(jsonPath("$.next").isString())
+                .andExpect(jsonPath("$.prev").isString())
+                .andExpect(jsonPath("$.result").isArray())
+                .andExpect(jsonPath("$.result[:1].id").value(result1.getId()))
+                .andExpect(jsonPath("$.result[:1].name").value(result1.getName()));
 	}
-
+  
+    @Test
+    public void shouldGetEventsFromEventList() throws Exception {
+        mockMvc.perform(get("/events_lists/1/events"))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.[:1].id").value(1))
+                .andExpect(jsonPath("$.[1:2].id").value(2))
+                .andExpect(status().isOk());
+    }
 }

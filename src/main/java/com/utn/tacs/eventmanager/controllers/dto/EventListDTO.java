@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class EventListDTO {
 
+    private Integer id;
     private String name;
 
 }
