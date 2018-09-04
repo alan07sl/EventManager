@@ -17,8 +17,8 @@ public class EventController {
 	}
 
 	@GetMapping
-    public ResponseEntity<String> getEvents(String eventos){
-        return new ResponseEntity<String>("Eventos", HttpStatus.OK);
+    public ResponseEntity<String> getEvents(){
+        return new ResponseEntity<String>("Events", HttpStatus.OK);
     }
 
 }

@@ -16,16 +16,12 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<String> getUsers(UserDTO user) {
-        return new ResponseEntity<String>("users", HttpStatus.OK);
+    public ResponseEntity<String> getUsers() {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping("/{id}")
-    @GetMapping
-    public @ResponseBody
-    ResponseEntity<String>
-    getById(@PathVariable String id) {
-        return new ResponseEntity<String>("GET ID : "
-                + id, HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getById(@PathVariable String id) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
