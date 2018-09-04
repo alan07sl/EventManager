@@ -80,7 +80,15 @@ public class EventListControllerTest {
                 .andExpect(jsonPath("$.result").isArray())
                 .andExpect(jsonPath("$.result[:1].id").value(result1.getId()))
                 .andExpect(jsonPath("$.result[:1].name").value(result1.getName()));
-
 	}
+  
+  @Test
+  public void shouldGetEventsFromEventList() throws Exception {
 
+  mockMvc.perform(get("/events_lists/1/events"))
+      .andExpect(jsonPath("$").isArray())
+      .andExpect(jsonPath("$.[:1].id").value(1))
+      .andExpect(jsonPath("$.[1:2].id").value(2))
+      .andExpect(status().isOk());
+  }
 }

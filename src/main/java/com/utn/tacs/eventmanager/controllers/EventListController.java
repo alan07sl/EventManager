@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("/events_lists")
@@ -58,5 +59,19 @@ public class EventListController {
     @DeleteMapping("/{eventListId}")
     public ResponseEntity<Object> deleteEventList(@PathVariable Integer eventListId) {
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{eventListId}/events")
+    public ResponseEntity<List<EventDTO>> getEventsFromEventList(@PathVariable Integer eventListId) {
+        EventDTO e1 = new EventDTO();
+        e1.setId(1);
+        EventDTO e2 = new EventDTO();
+        e2.setId(2);
+
+        List<EventDTO> events = new ArrayList<>();
+        events.add(e1);
+        events.add(e2);
+
+        return new ResponseEntity<>(events,HttpStatus.OK);
     }
 }
