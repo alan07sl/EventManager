@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,5 +31,17 @@ public class UserControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(new Gson().toJson(user))).andExpect(status().isCreated());
 	}
+
+	@Test
+	public void shouldGetUser() throws Exception {
+		mockMvc.perform(get("/users"))
+				.andExpect(status().isOk());
+	}
+
+    @Test
+    public void shouldGetUserId() throws Exception {
+        mockMvc.perform(get("/users/1"))
+                .andExpect(status().isOk());
+    }
 
 }
