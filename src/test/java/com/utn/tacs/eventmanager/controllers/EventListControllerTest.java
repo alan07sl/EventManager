@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 ;
@@ -58,5 +59,15 @@ public class EventListControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new Gson().toJson(eventList))).andExpect(status().isOk());
     }
+
+	@Test
+	public void shouldGetEventsFromEventList() throws Exception {
+
+		mockMvc.perform(get("/events_lists/1/events"))
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$.[:1].id").value(1))
+				.andExpect(jsonPath("$.[1:2].id").value(2))
+				.andExpect(status().isOk());
+	}
 
 }
