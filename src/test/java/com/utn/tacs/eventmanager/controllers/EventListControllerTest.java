@@ -52,10 +52,31 @@ public class EventListControllerTest {
 		mockMvc.perform(delete("/events_lists/1")).andExpect(status().isOk());
 	}
 
-    @Test
-    public void shouldUpdateEventList() throws Exception {
-        EventListDTO eventList = new EventListDTO();
-        eventList.setName("NewList");
+	@Test
+	public void shouldUpdateEventList() throws Exception {
+		EventListDTO eventList = new EventListDTO();
+		eventList.setName("NewList");
+
+		mockMvc.perform(put("/events_lists/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(new Gson().toJson(eventList))).andExpect(status().isOk());
+	}
+
+	@Test
+	public void shouldGetEvents() throws Exception {
+
+		EventListDTO eventList = new EventListDTO();
+		eventList.setName("NewList");
+
+		mockMvc.perform(get("/events_lists/events")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(new Gson().toJson(eventList))).andExpect(status().isOk());
+
+	}
+	@Test
+	public void shouldGetCommonsEvents() throws Exception {
+		EventListDTO eventList = new EventListDTO();
+		eventList.setName("NewList");
 
 		mockMvc.perform(get("/events_lists/match?eventListId=1&eventListId=2")
 				.contentType(MediaType.APPLICATION_JSON)
