@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,22 +66,21 @@ public class EventListControllerTest {
 	@Test
 	public void shouldGetEvents() throws Exception {
 
-		EventListDTO eventList = new EventListDTO();
-		eventList.setName("NewList");
+		EventDTO events = new EventDTO();
+		events.setName("Events");
 
-		mockMvc.perform(get("/events_lists/events")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(new Gson().toJson(eventList))).andExpect(status().isOk());
+		mockMvc.perform(get("/events_lists/events")).andExpect(status().isOk());
 
 	}
 	@Test
 	public void shouldGetCommonsEvents() throws Exception {
-		EventListDTO eventList = new EventListDTO();
-		eventList.setName("NewList");
+		EventDTO CommonEvents = new EventDTO();
+		CommonEvents.setName("CommonEvents");
 
-		mockMvc.perform(get("/events_lists/match?eventListId=1&eventListId=2")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(new Gson().toJson(eventList))).andExpect(status().isOk());
+		mockMvc.perform(get("/events_lists/match?eventListId=1&eventListId=2"))
+				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+				.andExpect(jsonPath("$.content")).value(CommonEvents);
 
 	}
 }

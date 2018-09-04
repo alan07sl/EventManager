@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/events_lists")
 public class EventListController {
@@ -32,19 +35,26 @@ public class EventListController {
     }
 
     @GetMapping("/events")
-    public ResponseEntity<EventListDTO> getEvents() {
-        EventListDTO eventList = new EventListDTO();
-        eventList.setName("NewList");
+    public ResponseEntity<List<EventDTO>> getEvents() {
 
-        return new ResponseEntity<>(eventList,HttpStatus.OK);
+        ArrayList<EventDTO> events = new ArrayList<EventDTO>();
+        EventDTO event = new EventDTO();
+        event.setId(1);
+        events.add(event);
+
+        return new ResponseEntity<List<EventDTO>>(events,HttpStatus.OK);
     }
 
-    @GetMapping("/events/match?{eventListId}&{eventListId2}")
-    public ResponseEntity<EventListDTO> getCommonEvents(@PathVariable Integer eventListId,@PathVariable Integer eventListId2) {
-        EventListDTO eventList = new EventListDTO();
-        eventList.setName("NewList");
+    @GetMapping("/events/match")
+    public ResponseEntity<List<EventDTO>> getCommonEvents(@RequestParam("eventListId") Integer eventListId,@RequestParam("eventListId") Integer eventListId2) {
+        ArrayList<EventDTO>  CommonEvents = new ArrayList<EventDTO>();
+        EventDTO eventInCommon = new EventDTO();
+        eventInCommon.setId(1);
+        CommonEvents.add(eventInCommon);
 
-        return new ResponseEntity<>(eventList,HttpStatus.OK);
+
+
+        return new ResponseEntity<List<EventDTO>>(CommonEvents,HttpStatus.OK);
     }
 
 }
