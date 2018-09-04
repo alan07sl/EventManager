@@ -1,5 +1,8 @@
 package com.utn.tacs.eventmanager.controllers;
 
+
+
+
 import com.google.gson.Gson;
 import com.utn.tacs.eventmanager.controllers.dto.EventDTO;
 import com.utn.tacs.eventmanager.controllers.dto.EventListDTO;
@@ -24,15 +27,15 @@ public class EventListControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-    @Test
-    public void shouldCreateEventList() throws Exception {
-        EventListDTO eventList = new EventListDTO();
-        eventList.setName("MyList");
+	@Test
+	public void shouldCreateEventList() throws Exception {
+		EventListDTO eventList = new EventListDTO();
+		eventList.setName("MyList");
 
-        mockMvc.perform(post("/events_lists")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new Gson().toJson(eventList))).andExpect(status().isCreated());
-    }
+		mockMvc.perform(post("/events_lists")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(new Gson().toJson(eventList))).andExpect(status().isCreated());
+	}
 
 	@Test
 	public void shouldAddEventToList() throws Exception {
@@ -54,9 +57,9 @@ public class EventListControllerTest {
         EventListDTO eventList = new EventListDTO();
         eventList.setName("NewList");
 
-        mockMvc.perform(put("/events_lists/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new Gson().toJson(eventList))).andExpect(status().isOk());
-    }
+		mockMvc.perform(get("/events_lists/match?eventListId=1&eventListId=2")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(new Gson().toJson(eventList))).andExpect(status().isOk());
 
+	}
 }

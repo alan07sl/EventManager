@@ -32,13 +32,19 @@ public class EventListController {
     }
 
     @GetMapping("/events")
-    public ResponseEntity<Object> getEvents() {
-           return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<EventListDTO> getEvents() {
+        EventListDTO eventList = new EventListDTO();
+        eventList.setName("NewList");
+
+        return new ResponseEntity<>(eventList,HttpStatus.OK);
     }
 
     @GetMapping("/events/match?{eventListId}&{eventListId2}")
-    public ResponseEntity<Object> getCommonEvents(@PathVariable Integer eventListId,@PathVariable Integer eventListId2) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<EventListDTO> getCommonEvents(@PathVariable Integer eventListId,@PathVariable Integer eventListId2) {
+        EventListDTO eventList = new EventListDTO();
+        eventList.setName("NewList");
+
+        return new ResponseEntity<>(eventList,HttpStatus.OK);
     }
 
 }
