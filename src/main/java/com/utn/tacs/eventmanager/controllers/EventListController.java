@@ -61,6 +61,27 @@ public class EventListController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/events")
+    public ResponseEntity<List<EventDTO>> getEvents() {
+
+        ArrayList<EventDTO> events = new ArrayList<EventDTO>();
+        EventDTO event = new EventDTO();
+        event.setId(1);
+        events.add(event);
+
+        return new ResponseEntity<List<EventDTO>>(events,HttpStatus.OK);
+    }
+
+    @GetMapping("/match")
+    public ResponseEntity<List<EventDTO>> getCommonEvents(@RequestParam("eventListId1") Integer eventListId,@RequestParam("eventListId2") Integer eventListId2) {
+        ArrayList<EventDTO>  CommonEvents = new ArrayList<EventDTO>();
+        EventDTO eventInCommon = new EventDTO();
+        eventInCommon.setId(1);
+        CommonEvents.add(eventInCommon);
+
+        return new ResponseEntity<List<EventDTO>>(CommonEvents,HttpStatus.OK);
+    }
+
     @GetMapping("/{eventListId}/events")
     public ResponseEntity<List<EventDTO>> getEventsFromEventList(@PathVariable Integer eventListId) {
         EventDTO e1 = new EventDTO();

@@ -8,4 +8,8 @@ public class EventDTO {
 
     private Integer id;
 
+    public void setId(Integer idParam){
+        id = idParam;
+    }
+
 }
