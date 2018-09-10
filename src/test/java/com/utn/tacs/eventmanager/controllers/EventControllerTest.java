@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -55,6 +56,18 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.next").isString())
                 .andExpect(jsonPath("$.prev").isString())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldFailGetEvents() throws Throwable {
+
+        Mockito.when(eventbriteService.getEvents("2", "")).thenThrow(new CustomException("","", HttpStatus.INTERNAL_SERVER_ERROR));
+
+        mockMvc.perform(get("/events?page=2"))
+                .andExpect(jsonPath("$.status").isNumber())
+                .andExpect(jsonPath("$.message").isString())
+                .andExpect(jsonPath("$.description").isString())
+                .andExpect(status().isInternalServerError());
     }
 }
 
