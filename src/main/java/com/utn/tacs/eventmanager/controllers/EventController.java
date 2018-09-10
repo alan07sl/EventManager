@@ -1,15 +1,22 @@
 package com.utn.tacs.eventmanager.controllers;
 
 import com.utn.tacs.eventmanager.controllers.dto.*;
+import com.utn.tacs.eventmanager.errors.CustomException;
+import com.utn.tacs.eventmanager.services.EventbriteService;
+import com.utn.tacs.eventmanager.services.dto.EventsResponseDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/events")
 public class EventController {
+
+    @Autowired
+    private EventbriteService eventbriteService;
 
 	@GetMapping("/{eventId}/users")
 	public ResponseEntity<EventUsersDTO> getEventUsers(@PathVariable Integer eventId) {
@@ -19,24 +26,18 @@ public class EventController {
 	}
 
 	@GetMapping
-    public ResponseEntity<ListDTO<EventDTO>> getEvents(
-    		@RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "page", defaultValue = "1") Integer page,
-            @RequestParam(value = "size", defaultValue = "10") Integer size ){
-        ListDTO<EventDTO> list = new ListDTO<>();
-        list.setNext("/events?page=2");
-        list.setPrev("/events?page=1");
-        list.setPageCount(3);
-        list.setPageNumber(page);
-        list.setResultCount(100);
+    public ResponseEntity<ListDTO<Map<String,Object>>> getEvents(
+    		@RequestParam(value = "page", required = false, defaultValue = "1") String page,
+            @RequestParam(value = "query", required = false, defaultValue = "") String query) throws CustomException {
+	    EventsResponseDTO response = eventbriteService.getEvents(page,query);
 
-        EventDTO result1 = new EventDTO();
-        result1.setId(1);
-
-        EventDTO result2 = new EventDTO();
-        result2.setId(2);
-
-        list.setResult(Arrays.asList(result1,result2));
+        ListDTO<Map<String,Object>> list = new ListDTO<>();
+        list.setResult(response.getEvents());
+        list.setPageNumber(response.getPagination().getPageNumber());
+        list.setResultCount(response.getPagination().getObjectCount());
+        list.setPageCount(response.getPagination().getPageCount());
+        list.setNext(response.getPagination().hasMoreItems() ? "/events?page="+ (list.getPageNumber() + 1) + "&query=" + query : null);
+        list.setPrev(list.getPageNumber() > 1 ? "/events?page="+ (list.getPageNumber() - 1) + "&query=" + query : null);
 
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
