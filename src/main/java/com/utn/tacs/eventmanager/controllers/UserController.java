@@ -1,21 +1,31 @@
 package com.utn.tacs.eventmanager.controllers;
 
-import com.utn.tacs.eventmanager.controllers.dto.EventListDTO;
 import com.utn.tacs.eventmanager.controllers.dto.ListDTO;
 import com.utn.tacs.eventmanager.controllers.dto.UserDTO;
+import com.utn.tacs.eventmanager.dao.User;
+import com.utn.tacs.eventmanager.errors.CustomException;
+import com.utn.tacs.eventmanager.services.UserService;
+import ma.glasnost.orika.MapperFacade;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
+    @Autowired
+    private MapperFacade orikaMapper;
+
+    @Autowired
+    private UserService userService;
+
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody UserDTO user) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDTO user) throws CustomException {
+        userService.createUser(orikaMapper.map(user, User.class));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
