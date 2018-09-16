@@ -17,7 +17,7 @@ public class EventManagerApplication {
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
-
+  
 	@Bean
     public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
