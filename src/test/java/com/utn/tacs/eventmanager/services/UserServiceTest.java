@@ -45,4 +45,17 @@ public class UserServiceTest {
             assertThat("User already exist", true);
         }
     }
+
+    @Test
+    public void shouldNotFailCreateDifferentUsers() throws CustomException {
+        User user = new User("martin","1234");
+        User user2 = new User("alan","1234");
+        userService.createUser(user);
+        try{
+            userService.createUser(user2);
+            assertThat("Should not fail because user already exist", true);
+        } catch (UserExistException e) {
+            assertThat("User already exist", false);
+        }
+    }
 }

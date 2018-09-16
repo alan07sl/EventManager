@@ -2,15 +2,16 @@ package com.utn.tacs.eventmanager.controllers;
 
 import com.google.gson.Gson;
 import com.utn.tacs.eventmanager.controllers.dto.AlarmDTO;
+import com.utn.tacs.eventmanager.services.AlarmService;
+import ma.glasnost.orika.MapperFacade;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.HashMap;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,17 +24,18 @@ public class AlarmControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@MockBean
+	private AlarmService alarmService;
+
+	@MockBean
+	private MapperFacade orikaMapper;
+
 	@Test
 	public void shouldCreateAlarm() throws Exception {
 
 		AlarmDTO alarmDTO = new AlarmDTO();
 		alarmDTO.setName("Alarma de test");
-		alarmDTO.setCriteria(new HashMap<String, String>(){
-			{
-				put("key1", "value1");
-				put("key2", "value2");
-			}
-		});
+		alarmDTO.setCriteria("unCriterio");
 
 		mockMvc.perform(post("/alarms")
 				.contentType(MediaType.APPLICATION_JSON)
