@@ -2,11 +2,13 @@ package com.utn.tacs.eventmanager.services;
 
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
+import com.utn.tacs.eventmanager.errors.InvalidCredentialsException;
 import com.utn.tacs.eventmanager.errors.UserExistException;
 import com.utn.tacs.eventmanager.errors.UserNotFoundException;
 import com.utn.tacs.eventmanager.repositories.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,20 +36,37 @@ public class UserServiceTest {
 
     @Test
     public void shouldCreateUser() throws CustomException {
-        userService.createUser(new User("martin","1234"));
+        userService.createUser(new User("martin", "1234"));
         assertThat(userRepository.exists(Example.of(new User("martin", null))), equalTo(true));
     }
 
-    @Test
+    @Test(expected = UserExistException.class)
     public void shouldFailCreateUserBecauseAlreadyExist() throws CustomException {
-        User user = new User("martin","1234");
+        User user = new User("martin", "1234");
         userService.createUser(user);
-        try{
-            userService.createUser(user);
-            assertThat("Should fail because user already exist", false);
-        } catch (UserExistException e) {
-            assertThat("User already exist", true);
-        }
+        userService.createUser(user);
+    }
+
+    @Test
+    public void shouldAuthenticateUser() throws CustomException {
+        User user = new User("martin", "1234");
+        userService.createUser(user);
+        User authenticateUser = userService.authenticateUser("martin", "1234");
+        assertThat(authenticateUser.getUsername(), equalTo(user.getUsername()));
+    }
+
+    @Test(expected = InvalidCredentialsException.class)
+    public void shouldFailOnInvalidEmail() throws CustomException {
+        User user = new User("martin", "1234");
+        userService.createUser(user);
+        userService.authenticateUser("alan", "1234");
+    }
+
+    @Test(expected = InvalidCredentialsException.class)
+    public void shouldFailOnInvalidPassword() throws CustomException {
+        User user = new User("martin", "1234");
+        userService.createUser(user);
+        userService.authenticateUser("martin", "asdasd");
     }
 
     @Test
