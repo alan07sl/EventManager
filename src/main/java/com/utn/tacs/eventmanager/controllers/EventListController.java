@@ -1,98 +1,100 @@
 package com.utn.tacs.eventmanager.controllers;
 
-import com.utn.tacs.eventmanager.controllers.dto.EventDTO;
-import com.utn.tacs.eventmanager.controllers.dto.EventListDTO;
-import com.utn.tacs.eventmanager.controllers.dto.ListDTO;
-import com.utn.tacs.eventmanager.controllers.dto.UserDTO;
+import com.utn.tacs.eventmanager.controllers.dto.*;
+import com.utn.tacs.eventmanager.dao.EventList;
+import com.utn.tacs.eventmanager.errors.CustomException;
+import com.utn.tacs.eventmanager.repositories.EventListRepository;
+import com.utn.tacs.eventmanager.services.EventListService;
+import com.utn.tacs.eventmanager.services.EventbriteService;
+import ma.glasnost.orika.MapperFacade;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javax.validation.Valid;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/events_lists")
 public class EventListController {
 
+    @Autowired
+    private EventListService eventListService;
+
+    @Autowired
+    private EventbriteService eventbriteService;
+
+    @Autowired
+    private MapperFacade orikaMapper;
+
     @GetMapping
-    public ResponseEntity<ListDTO<EventListDTO>> getEventsLists(@RequestParam(value = "name", required = false) String name,
+    public ResponseEntity<ListDTO<EventListDTO>> getEventsLists(@RequestParam(value = "name", required = false, defaultValue = "") String name,
            @RequestParam(value = "page", defaultValue = "1") Integer page,
            @RequestParam(value = "size", defaultValue = "10") Integer size ) {
 
+        Page<EventList> result = eventListService.searchPaginated(name, page, size);
+
         ListDTO<EventListDTO> list = new ListDTO<>();
-        list.setNext("/events_lists?page=3");
-        list.setPrev("/events_lists?page=1");
-        list.setPageCount(3);
         list.setPageNumber(page);
-        list.setResultCount(100);
-
-        EventListDTO result1 = new EventListDTO();
-        result1.setName("r1");
-        result1.setId(1);
-
-        EventListDTO result2 = new EventListDTO();
-        result2.setId(2);
-        result2.setName("r2");
-
-        list.setResult(Arrays.asList(result1,result2));
+        list.setPageCount(result.getTotalPages());
+        list.setResultCount(result.getTotalElements());
+        list.setResult(result.getContent().stream().map((EventList e) -> orikaMapper.map(e, EventListDTO.class)).collect(Collectors.toList()));
+        list.setNext(result.hasNext() ? "/events_lists?page="+ (list.getPageNumber() + 1) + "&name=" + name + "&size=" + size : null);
+        list.setPrev(list.getPageNumber() > 1 ? "/events_lists?page="+ (list.getPageNumber() - 1) + "&name=" + name + "&size=" + size : null);
 
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Object> createEventList(@RequestBody EventListDTO eventList) {
+    public ResponseEntity<Object> createEventList(@Valid @RequestBody EventListDTO eventList) {
+        eventListService.createEventList(orikaMapper.map(eventList, EventList.class));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/{eventListId}")
-    public ResponseEntity<Object> addEvent(@PathVariable Integer eventListId, @RequestBody EventDTO event) {
+    public ResponseEntity<Object> addEvent(@PathVariable Integer eventListId, @Valid @RequestBody EventDTO event) throws CustomException {
+        eventbriteService.getEvent(event.getId());
+        eventListService.addEvent(eventListId,event.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{eventListId}")
-    public ResponseEntity<Object> modifyEvent(@PathVariable Integer eventListId, @RequestBody EventListDTO eventList) {
+    public ResponseEntity<Object> modifyEventList(@PathVariable Integer eventListId,
+                                                  @Valid @RequestBody EventListDTO eventList) throws CustomException {
+        eventListService.updateEventList(eventListId,orikaMapper.map(eventList, EventList.class));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{eventListId}")
     public ResponseEntity<Object> deleteEventList(@PathVariable Integer eventListId) {
+        eventListService.delete(eventListId.longValue());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/events")
-    public ResponseEntity<List<EventDTO>> getEvents() {
-
-        ArrayList<EventDTO> events = new ArrayList<EventDTO>();
-        EventDTO event = new EventDTO();
-        event.setId(1);
-        events.add(event);
-
-        return new ResponseEntity<List<EventDTO>>(events,HttpStatus.OK);
+    public ResponseEntity<Object> getEvents(@RequestParam("from") @DateTimeFormat(pattern="yyyy-MM-dd") Date from) {
+        return new ResponseEntity<>(new EventStatsDTO(eventListService.countEvents(from)),HttpStatus.OK);
     }
 
     @GetMapping("/match")
-    public ResponseEntity<List<EventDTO>> getCommonEvents(@RequestParam("eventListId1") Integer eventListId,@RequestParam("eventListId2") Integer eventListId2) {
-        ArrayList<EventDTO>  CommonEvents = new ArrayList<EventDTO>();
-        EventDTO eventInCommon = new EventDTO();
-        eventInCommon.setId(1);
-        CommonEvents.add(eventInCommon);
+    public ResponseEntity<List<Map<String,Object>>> getCommonEvents(@RequestParam("eventListId1") Integer eventListId,
+                                                                    @RequestParam("eventListId2") Integer eventListId2) throws CustomException{
+        EventList eventList1 = eventListService.findById(eventListId);
+        EventList eventList2 = eventListService.findById(eventListId2);
 
-        return new ResponseEntity<List<EventDTO>>(CommonEvents,HttpStatus.OK);
+        Set<Long> commonEventsIds = new HashSet<>(eventList1.getEvents());
+        commonEventsIds.retainAll(eventList2.getEvents());
+
+        return new ResponseEntity<>(eventbriteService.getEvents(commonEventsIds),HttpStatus.OK);
     }
 
     @GetMapping("/{eventListId}/events")
-    public ResponseEntity<List<EventDTO>> getEventsFromEventList(@PathVariable Integer eventListId) {
-        EventDTO e1 = new EventDTO();
-        e1.setId(1);
-        EventDTO e2 = new EventDTO();
-        e2.setId(2);
-
-        List<EventDTO> events = new ArrayList<>();
-        events.add(e1);
-        events.add(e2);
-
-        return new ResponseEntity<>(events,HttpStatus.OK);
+    public ResponseEntity<List<Map<String,Object>>> getEventsFromEventList(@PathVariable Integer eventListId) throws CustomException {
+        EventList eventList = eventListService.findById(eventListId);
+        return new ResponseEntity<>(eventbriteService.getEvents(eventList.getEvents()),HttpStatus.OK);
     }
 }

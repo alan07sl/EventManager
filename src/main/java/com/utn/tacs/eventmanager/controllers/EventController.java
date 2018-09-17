@@ -34,7 +34,7 @@ public class EventController {
         ListDTO<Map<String,Object>> list = new ListDTO<>();
         list.setResult(response.getEvents());
         list.setPageNumber(response.getPagination().getPageNumber());
-        list.setResultCount(response.getPagination().getObjectCount());
+        list.setResultCount(Long.valueOf(response.getPagination().getObjectCount()));
         list.setPageCount(response.getPagination().getPageCount());
         list.setNext(response.getPagination().hasMoreItems() ? "/events?page="+ (list.getPageNumber() + 1) + "&query=" + query : null);
         list.setPrev(list.getPageNumber() > 1 ? "/events?page="+ (list.getPageNumber() - 1) + "&query=" + query : null);

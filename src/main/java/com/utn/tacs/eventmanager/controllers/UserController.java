@@ -39,7 +39,7 @@ public class UserController {
         list.setPrev("/events?page=1");
         list.setPageCount(3);
         list.setPageNumber(page);
-        list.setResultCount(100);
+        list.setResultCount(100L);
 
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
