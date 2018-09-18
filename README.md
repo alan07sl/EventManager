@@ -19,3 +19,6 @@ Hecha para proveer documentación out of the box respecto de la API.
 ### Calidad de código
 - **CI** esta integrado con **JaCoCo** y **Sonar Cloud** para asegurar la calidad del código.
 - El proyecto en **Sonar Cloud** puede ser accedido desde la siguiente **[URL](https://sonarcloud.io/organizations/tacs-utn/projects)**
+
+### Arrancando el proyecto
+- Para arrancar el proyecto correr el comando `mvn run:spring-boot` 
