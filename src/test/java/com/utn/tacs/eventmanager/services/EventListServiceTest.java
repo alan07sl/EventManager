@@ -47,7 +47,7 @@ public class EventListServiceTest {
     private EventListRepository eventListRepository;
 
     @Test
-    public void shouldCreateEventList() {
+    public void shouldCreateEventList() throws CustomException{
         eventListService.createEventList(new EventList("eventList1"));
         assertThat(eventListRepository.exists(Example.of(new EventList("eventList1"))), equalTo(true));
     }

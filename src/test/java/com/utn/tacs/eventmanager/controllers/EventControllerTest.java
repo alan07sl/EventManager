@@ -1,9 +1,9 @@
 package com.utn.tacs.eventmanager.controllers;
 
-import com.google.gson.Gson;
-import com.utn.tacs.eventmanager.controllers.dto.EventListDTO;
 import com.utn.tacs.eventmanager.errors.CustomException;
+import com.utn.tacs.eventmanager.services.EventListService;
 import com.utn.tacs.eventmanager.services.EventbriteService;
+import com.utn.tacs.eventmanager.services.UserService;
 import com.utn.tacs.eventmanager.services.dto.EventsResponseDTO;
 import com.utn.tacs.eventmanager.services.dto.PaginatedDTO;
 import org.junit.Test;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,6 +31,9 @@ public class EventControllerTest {
 
     @MockBean
     private EventbriteService eventbriteService;
+
+    @MockBean
+    private EventListService eventListService;
 
 	@Test
     public void shouldGet() throws Exception {
