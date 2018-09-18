@@ -115,5 +115,10 @@ public class EventListServiceTest {
         assertThat(result.getTotalElements(), equalTo(2L));
     }
 
+    @Test
+    public void shouldCountUserInterested() {
+        assertThat(eventListService.usersInterested(1L), equalTo(0));
+    }
+
 
 }

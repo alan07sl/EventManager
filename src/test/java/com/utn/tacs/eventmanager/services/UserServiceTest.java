@@ -72,18 +72,12 @@ public class UserServiceTest {
         assertThat("Should success get of user", true);
     }
 
-    @Test
+    @Test(expected = UserNotFoundException.class)
     public void shouldFailGetOfUserBecauseNotExist() throws CustomException {
         User user = new User("a", "123");
 
         userRepository.save(user);
-
-        try {
-            userService.findById(user.getId().intValue() + 22);
-            assertThat("Should fail get of user", false);
-        } catch (UserNotFoundException e) {
-            assertThat("Should fail get of user", true);
-        }
+        userService.findById(user.getId().intValue() + 22);
 
     }
 }
