@@ -58,14 +58,14 @@ public class EventListServiceTest {
         eventList.setCreationDate(new Date());
         eventList = eventListRepository.save(eventList);
         EventList newEventList = new EventList("bb");
-        eventListService.updateEventList(eventList.getId().intValue(), newEventList);
+        eventListService.updateEventList(eventList.getId().intValue(), newEventList, null);
         assertThat(eventListRepository.exists(Example.of(newEventList)), equalTo(true));
     }
 
     @Test
     public void shouldFailUpdateEventListBecauseNotExist() throws CustomException {
         try {
-            eventListService.updateEventList(123123, new EventList("1"));
+            eventListService.updateEventList(123123, new EventList("1"), null);
             assertThat("Update should fail because event list not exist", false);
         } catch (EventListNotFoundException e) {
             assertThat("Update should fail because event list not exist", true);
@@ -73,11 +73,11 @@ public class EventListServiceTest {
     }
 
     @Test
-    public void shouldDeleteEventList() {
+    public void shouldDeleteEventList() throws CustomException {
         EventList eventList = new EventList("a");
         eventList.setCreationDate(new Date());
         eventList = eventListRepository.save(eventList);
-        eventListService.delete(eventList.getId());
+        eventListService.delete(eventList.getId(), null);
         assertThat(eventListRepository.exists(Example.of(eventList)), equalTo(false));
     }
 
@@ -87,8 +87,8 @@ public class EventListServiceTest {
         eventList.setCreationDate(new Date());
         eventList = eventListRepository.save(eventList);
 
-        eventListService.addEvent(eventList.getId().intValue(), 1L);
-        eventListService.addEvent(eventList.getId().intValue(), 2L);
+        eventListService.addEvent(eventList.getId().intValue(), 1L, null);
+        eventListService.addEvent(eventList.getId().intValue(), 2L, null);
 
         eventList = eventListService.findById(eventList.getId().intValue());
 
