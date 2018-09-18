@@ -47,7 +47,7 @@ public class EventListServiceTest {
     private EventListRepository eventListRepository;
 
     @Test
-    public void shouldCreateEventList() {
+    public void shouldCreateEventList() throws CustomException{
         eventListService.createEventList(new EventList("eventList1"));
         assertThat(eventListRepository.exists(Example.of(new EventList("eventList1"))), equalTo(true));
     }
@@ -113,6 +113,11 @@ public class EventListServiceTest {
         Page<EventList> result = eventListService.searchPaginated("", 1 , 1);
         assertThat(result.getTotalPages(), equalTo(2));
         assertThat(result.getTotalElements(), equalTo(2L));
+    }
+
+    @Test
+    public void shouldCountUserInterested() {
+        assertThat(eventListService.usersInterested(1L), equalTo(0));
     }
 
 

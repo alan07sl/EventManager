@@ -50,7 +50,7 @@ public class EventListController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createEventList(@Valid @RequestBody EventListDTO eventList) {
+    public ResponseEntity<Object> createEventList(@Valid @RequestBody EventListDTO eventList) throws CustomException {
         eventListService.createEventList(orikaMapper.map(eventList, EventList.class));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

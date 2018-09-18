@@ -2,6 +2,7 @@ package com.utn.tacs.eventmanager.controllers;
 
 import com.utn.tacs.eventmanager.controllers.dto.*;
 import com.utn.tacs.eventmanager.errors.CustomException;
+import com.utn.tacs.eventmanager.services.EventListService;
 import com.utn.tacs.eventmanager.services.EventbriteService;
 import com.utn.tacs.eventmanager.services.dto.EventsResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,13 @@ public class EventController {
     @Autowired
     private EventbriteService eventbriteService;
 
+    @Autowired
+    private EventListService eventListService;
+
 	@GetMapping("/{eventId}/users")
-	public ResponseEntity<EventUsersDTO> getEventUsers(@PathVariable Integer eventId) {
+	public ResponseEntity<EventUsersDTO> getEventUsers(@PathVariable Long eventId) {
 		EventUsersDTO usersInterested = new EventUsersDTO();
-		usersInterested.setAmount(1);
+		usersInterested.setAmount(eventListService.usersInterested(eventId));
 		return new ResponseEntity<>(usersInterested,HttpStatus.OK);
 	}
 
