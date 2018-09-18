@@ -9,7 +9,7 @@ public class ListDTO<T> {
 
     private Integer pageNumber;
     private Integer pageCount;
-    private Integer resultCount;
+    private Long resultCount;
     private String next;
     private String prev;
     private List<T> result;

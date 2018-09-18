@@ -16,10 +16,14 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withUnauthorizedRequest;
 
+import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(EventbriteService.class)
@@ -30,6 +34,9 @@ public class EventbriteServiceTest {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private AsyncRestTemplate asyncRestTemplate;
 
     @Value("${eventbrite.url}")
     private String eventbriteURL;
@@ -70,6 +77,66 @@ public class EventbriteServiceTest {
             assertThat("Get events should fail",false);
         } catch(CustomException e) {
             assertThat(e.getStatus().value(), equalTo(401));
+        }
+        mockServer.verify();
+    }
+
+    @Test
+    public void shouldSuccessGetEvent() throws CustomException {
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(restTemplate);
+
+        mockServer.expect(requestTo(eventbriteURL + "/events/1?token=" + token))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{}", MediaType.APPLICATION_JSON));
+
+        eventbriteService.getEvent(1L);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void shouldFailGetEvent() {
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(restTemplate);
+
+        mockServer.expect(requestTo(eventbriteURL + "/events/1?token=" + token))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withUnauthorizedRequest());
+
+        try {
+            eventbriteService.getEvent(1L);
+            assertThat("Get events should fail",false);
+        } catch(CustomException e) {
+            assertThat(e.getStatus().value(), equalTo(401));
+        }
+        mockServer.verify();
+    }
+
+    @Test
+    public void shouldSuccessGetEventsByIds() throws CustomException {
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(asyncRestTemplate);
+
+        mockServer.expect(requestTo(eventbriteURL + "/events/1?token=" + token))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{}", MediaType.APPLICATION_JSON));
+
+        eventbriteService.getEvents(Arrays.asList(1L));
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void shouldFailGetEventsByIds() {
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(asyncRestTemplate);
+
+        mockServer.expect(requestTo(eventbriteURL + "/events/1?token=" + token))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withServerError());
+
+        try {
+            eventbriteService.getEvents(Arrays.asList(1L));
+            assertThat("Get events should fail",false);
+        } catch(CustomException e) {
+            assertThat(e.getStatus().value(), equalTo(500));
         }
         mockServer.verify();
     }
