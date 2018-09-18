@@ -68,8 +68,9 @@ public class UserServiceTest {
 
         userRepository.save(user);
 
-        userService.findById(user.getId().intValue());
-        assertThat("Should success get of user", true);
+        User foundUser = userService.findById(user.getId().intValue());
+        assertThat(user.getUsername(), equalTo(foundUser.getUsername()));
+        assertThat(user.getPassword(), equalTo(foundUser.getPassword()));
     }
 
     @Test(expected = UserNotFoundException.class)
