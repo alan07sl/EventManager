@@ -54,7 +54,7 @@ public class EventListController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createEventList(@Valid @RequestBody EventListDTO eventListDTO) throws CustomException {
+    public ResponseEntity<Object> createEventList(@Valid @RequestBody EventListDTO eventListDTO) {
         EventList eventList = orikaMapper.map(eventListDTO, EventList.class);
         eventList.setUser(userService.findCurrentUser());
         eventListService.createEventList(eventList);

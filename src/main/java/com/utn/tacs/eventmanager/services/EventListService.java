@@ -36,7 +36,7 @@ public class EventListService {
 
     public void updateEventList(Integer id, EventList eventList, User user) throws CustomException {
         EventList actualEventList = findById(id);
-        checkOwnedByUser(user, eventList);
+        checkOwnedByUser(user, actualEventList);
         actualEventList.setName(eventList.getName());
         eventListRepository.save(actualEventList);
     }

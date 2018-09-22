@@ -1,15 +1,13 @@
 package com.utn.tacs.eventmanager;
 
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @SpringBootApplication
 public class EventManagerApplication {
@@ -31,5 +29,10 @@ public class EventManagerApplication {
 	@Bean
 	public AsyncRestTemplate asyncRestTemplate() {
 		return new AsyncRestTemplate();
+	}
+
+	@Bean
+	public MapperFacade mapperFacade() {
+		return new DefaultMapperFactory.Builder().build().getMapperFacade();
 	}
 }

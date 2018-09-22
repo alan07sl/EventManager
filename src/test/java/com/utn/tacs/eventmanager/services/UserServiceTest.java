@@ -35,6 +35,19 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @Test
+    public void shouldSuccessSearchPaginatedOfUsers() throws CustomException {
+        userRepository.deleteAll();
+        User u1 = new User("a", "123");
+        User u2 = new User("b", "123");
+
+        userRepository.saveAll(Arrays.asList(u1, u2));
+        Page<User> result = userService.searchPaginated(new User(null,null), 1 , 1);
+        assertThat(result.getTotalPages(), equalTo(2));
+        assertThat(result.getTotalElements(), equalTo(2L));
+    }
+
+
+    @Test
     public void shouldCreateUser() throws CustomException {
         userService.createUser(new User("martin", "1234"));
         assertThat(userRepository.exists(Example.of(new User("martin", null))), equalTo(true));
@@ -67,18 +80,6 @@ public class UserServiceTest {
         User user = new User("martin", "1234");
         userService.createUser(user);
         userService.authenticateUser("martin", "asdasd");
-    }
-
-    @Test
-    public void shouldSuccessSearchPaginatedOfUsers() throws CustomException {
-        User u1 = new User("a", "123");
-        User u2 = new User("b", "123");
-
-        userRepository.saveAll(Arrays.asList(u1, u2));
-
-        Page<User> result = userService.searchPaginated(new User(null,null), 1 , 1);
-        assertThat(result.getTotalPages(), equalTo(2));
-        assertThat(result.getTotalElements(), equalTo(2L));
     }
 
     @Test

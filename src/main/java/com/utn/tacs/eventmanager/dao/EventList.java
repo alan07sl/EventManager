@@ -1,13 +1,10 @@
 package com.utn.tacs.eventmanager.dao;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Data
