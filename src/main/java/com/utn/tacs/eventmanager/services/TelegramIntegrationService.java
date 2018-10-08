@@ -2,6 +2,7 @@ package com.utn.tacs.eventmanager.services;
 
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.errors.InvalidCredentialsException;
+import com.utn.tacs.eventmanager.services.dto.EventsResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -17,6 +18,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 
     static String BotToken = "625563171:AAFyoxqMiAua2gLEGVRYcYF00KhAa2aYyG0";
     long ChatID ;
+    boolean LOGIN = false;
 
 
     @Autowired
@@ -31,11 +33,10 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update){
         String username = "Username";
         String password ="Password" ;
-        ChatID = update.getMessage().getChatId();
 
+        ChatID = update.getMessage().getChatId();
         String command = update.getMessage().getText();
         SendMessage message = new SendMessage();
-        Integer id = update.getUpdateId();
 
         if(command.equals("/login")) {
             if((username.equals("Username")) || (password.equals("Password"))  )
@@ -45,7 +46,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
                 try{
 
                 UserService.authenticateUser(username,password);
-
+                LOGIN = true;
                 MandarMensaje("Login Exitoso");
 
                 }catch(InvalidCredentialsException e){
@@ -65,6 +66,8 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
             MandarMensaje("Username guardado");
         }
 
+
+
         if(command.equals("/setpassword")) {
             if(!username.isEmpty()){
             List<String> parametros = ParsearComando(command);
@@ -76,14 +79,21 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
                 MandarMensaje("Falta Ingresar username");
         }
 
+        if(command.equals("/start")) {
+
+            MandarMensaje("Bienvenido, por favor, ingrese su usuario y contraseña para poder loguearse y acceder a los servicios de EventManager");
+
+        }
         if(command.contains("/buscarevento")){
+
+            if(LOGIN){
             List<String> parametros = ParsearComando(command);
 
             if(parametros.size() == 2){
                 try{
 
-                    eventbriteService.getEvents(parametros.get(0),parametros.get(1));
-                    MandarMensaje(parametros.get(0));
+                    EventsResponseDTO response = eventbriteService.getEvents(parametros.get(0),parametros.get(1));
+                    MandarMensaje(response.events.toString());
 
                 }catch (CustomException e){
 
@@ -93,11 +103,16 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
             }else {
                 MandarMensaje("Falta un parametro");
             }
+            }else{
+
+                MandarMensaje("Debe loguearse primero");
+            }
         }
 
 
         if(command.contains("/agregarevento")){
 
+            if(LOGIN){
             List <String> parametros = ParsearComando(command);
             if(parametros.size() < 1){
 
@@ -114,12 +129,18 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
                 }
 
             }
-            else{
+            else
                 MandarMensaje("Falta un parametro");
-            }
+
+            }else
+                 MandarMensaje("Debe loguearse primero");
 
         }
+
+
         if(command.contains("/revisarevento")) {
+
+            if(LOGIN){
             List<String> parametros = ParsearComando(command);
             if (parametros.size() < 1) {
                 long eventId = Long.parseLong(parametros.get(0));
@@ -133,13 +154,17 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
                     MandarMensaje(e.getMessage());
 
                 }
-            } else{
+            } else
                 MandarMensaje("Falta un parametros");
-            }
-        }
+
+        } else
+            MandarMensaje("Debe loguearse primero");
 
 
     }
+
+    }
+
     public void MandarMensaje(String message){
 
         SendMessage msg = new SendMessage();
