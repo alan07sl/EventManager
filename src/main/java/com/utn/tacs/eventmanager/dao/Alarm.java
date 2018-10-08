@@ -15,7 +15,7 @@ public class Alarm {
 	private String name;
 	@Column
 	private String criteria;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "F_USER_ID")
 	private User user;
 

@@ -14,8 +14,9 @@ public class Event {
 	private @Id
 	@GeneratedValue
 	Long id;
+	@Column(length = 1000)
 	private String name;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "F_USER_ID", referencedColumnName = "ID")
 	private User user;
 

@@ -5,6 +5,7 @@ import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.repositories.EventRepository;
 import com.utn.tacs.eventmanager.repositories.UserRepository;
 import com.utn.tacs.eventmanager.services.AlarmService;
+import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,22 @@ public class AlarmSchedulerTest {
 
 		//Assert
 		assertThat("No creo eventos para mostrar", eventRepository.findAll().size() > 0);
+	}
+
+	@Test
+	public void shouldAddEventsWithCriteriaTest(){
+		//Given
+		User user = new User("alan", "1234");
+		userRepository.save(user);
+		Alarm alarm = new Alarm("Alarma de Alan", "StrangerThings", user);
+
+		when(alarmService.getAlarms()).thenReturn(Arrays.asList(alarm));
+
+		//Do
+		alarmScheduler.activateAlarms();
+
+		//Assert
+		assertThat("No creo eventos para mostrar", eventRepository.findAll().size() > 0);
+		assertThat("No trajo eventos con el criterio", eventRepository.findAll().stream().anyMatch((event -> event.getName().contains("Stranger"))), Is.is(true));
 	}
 }

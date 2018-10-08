@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Component
@@ -36,15 +37,16 @@ public class AlarmScheduler {
 
 		List<Alarm> alarms = alarmService.getAlarms();
 
-		for(Alarm alarm : alarms) {
+		for (Alarm alarm : alarms) {
 			try {
-				EventsResponseDTO events = eventbriteService.getEvents("1" , alarm.getCriteria());
+				EventsResponseDTO events = eventbriteService.getEvents("1", alarm.getCriteria());
 
-				events.getEvents().forEach((map)->eventService.addEvent(new Event(map.get("name").toString(), alarm.getUser())));
+				events.getEvents().forEach((map) -> eventService.addEvent(new Event(((LinkedHashMap)map.get("name")).get("text").toString(), alarm.getUser())));
 
 			} catch (CustomException e) {
 				e.printStackTrace();
 			}
 		}
 	}
+
 }
