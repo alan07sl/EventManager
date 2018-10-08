@@ -60,7 +60,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
             }
         }
 
-        if(command.equals("/setusername")) {
+        if(command.equals("/username")) {
 
             List<String> parametros = ParsearComando(command);
             password = parametros.get(0);
@@ -69,7 +69,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 
 
 
-        if(command.equals("/setpassword")) {
+        if(command.equals("/password")) {
             if(!username.isEmpty()){
             List<String> parametros = ParsearComando(command);
 
