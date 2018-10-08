@@ -5,6 +5,8 @@ import com.utn.tacs.eventmanager.controllers.dto.UserDTO;
 import com.utn.tacs.eventmanager.controllers.dto.UserStatsDTO;
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
+import com.utn.tacs.eventmanager.repositories.UserRepository;
+import com.utn.tacs.eventmanager.security.JWTRepository;
 import com.utn.tacs.eventmanager.services.UserService;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.stream.Collectors;
+
+import static com.utn.tacs.eventmanager.security.SecurityConstants.HEADER_STRING;
+import static com.utn.tacs.eventmanager.security.SecurityConstants.TOKEN_PREFIX;
 
 @RestController
 @RequestMapping("/users")
@@ -60,5 +66,12 @@ public class UserController {
         userStats.setEventsLists(user.getEventsLists().size());
         userStats.setLastLogin(user.getLastLogin());
         return new ResponseEntity<>(userStats,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Object> logout(HttpServletRequest request) {
+        String token = request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, "");
+        JWTRepository.getInstance().removeToken(token);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

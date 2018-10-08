@@ -17,9 +17,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(AlarmController.class)
+@WebMvcTest(value = AlarmController.class, secure = false)
 public class AlarmControllerTest {
-
 
 	@Autowired
 	private MockMvc mockMvc;

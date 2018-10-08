@@ -8,6 +8,7 @@ import com.utn.tacs.eventmanager.controllers.dto.EventDTO;
 import com.utn.tacs.eventmanager.controllers.dto.EventListDTO;
 import com.utn.tacs.eventmanager.controllers.dto.ListDTO;
 import com.utn.tacs.eventmanager.dao.EventList;
+import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.services.EventListService;
 import com.utn.tacs.eventmanager.services.EventbriteService;
@@ -37,13 +38,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(EventListController.class)
+@WebMvcTest(value = EventListController.class, secure = false)
 public class EventListControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private MapperFacade orikaMapper;
 
     @MockBean
@@ -52,10 +53,15 @@ public class EventListControllerTest {
     @MockBean
     private EventListService eventListService;
 
+	@MockBean
+	private UserService userService;
+
 	@Test
 	public void shouldCreateEventList() throws Exception {
 		EventListDTO eventList = new EventListDTO();
 		eventList.setName("MyList");
+
+        Mockito.when(userService.findCurrentUser()).thenReturn(new User("",""));
 
 		mockMvc.perform(post("/events_lists")
 				.contentType(MediaType.APPLICATION_JSON)
