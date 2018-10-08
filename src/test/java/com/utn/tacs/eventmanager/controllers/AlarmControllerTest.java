@@ -2,6 +2,7 @@ package com.utn.tacs.eventmanager.controllers;
 
 import com.google.gson.Gson;
 import com.utn.tacs.eventmanager.controllers.dto.AlarmDTO;
+import com.utn.tacs.eventmanager.security.JWTRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(AlarmController.class)
+@WebMvcTest(value = AlarmController.class, secure = false)
 public class AlarmControllerTest {
-
 
 	@Autowired
 	private MockMvc mockMvc;

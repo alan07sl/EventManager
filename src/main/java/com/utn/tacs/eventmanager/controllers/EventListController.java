@@ -6,6 +6,7 @@ import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.repositories.EventListRepository;
 import com.utn.tacs.eventmanager.services.EventListService;
 import com.utn.tacs.eventmanager.services.EventbriteService;
+import com.utn.tacs.eventmanager.services.UserService;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,9 @@ public class EventListController {
 
     @Autowired
     private EventListService eventListService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private EventbriteService eventbriteService;
@@ -50,28 +54,30 @@ public class EventListController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createEventList(@Valid @RequestBody EventListDTO eventList) throws CustomException {
-        eventListService.createEventList(orikaMapper.map(eventList, EventList.class));
+    public ResponseEntity<Object> createEventList(@Valid @RequestBody EventListDTO eventListDTO) {
+        EventList eventList = orikaMapper.map(eventListDTO, EventList.class);
+        eventList.setUser(userService.findCurrentUser());
+        eventListService.createEventList(eventList);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/{eventListId}")
     public ResponseEntity<Object> addEvent(@PathVariable Integer eventListId, @Valid @RequestBody EventDTO event) throws CustomException {
         eventbriteService.getEvent(event.getId());
-        eventListService.addEvent(eventListId,event.getId());
+        eventListService.addEvent(eventListId,event.getId(), userService.findCurrentUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{eventListId}")
     public ResponseEntity<Object> modifyEventList(@PathVariable Integer eventListId,
                                                   @Valid @RequestBody EventListDTO eventList) throws CustomException {
-        eventListService.updateEventList(eventListId,orikaMapper.map(eventList, EventList.class));
+        eventListService.updateEventList(eventListId,orikaMapper.map(eventList, EventList.class), userService.findCurrentUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{eventListId}")
-    public ResponseEntity<Object> deleteEventList(@PathVariable Integer eventListId) {
-        eventListService.delete(eventListId.longValue());
+    public ResponseEntity<Object> deleteEventList(@PathVariable Integer eventListId) throws CustomException {
+        eventListService.delete(eventListId.longValue(), userService.findCurrentUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
