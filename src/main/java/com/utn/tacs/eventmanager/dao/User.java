@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -13,9 +14,9 @@ public class User {
     private @Id @GeneratedValue Long id;
     private @Column(unique = true) String username;
     private String password;
-    @OneToMany
-    @JoinColumn(name = "F_ALARM_ID")
-    private List<Alarm> alarms = new ArrayList<>();
+    private Date lastLogin;
+    private @OneToMany(mappedBy = "user") List<EventList> eventsLists;
+    private @OneToMany(mappedBy = "user") List<Alarm> alarms;
     @OneToMany
     private List<Event> events = new ArrayList<>();
 
