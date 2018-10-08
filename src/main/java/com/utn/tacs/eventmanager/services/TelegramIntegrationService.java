@@ -19,6 +19,8 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
     static String BotToken = "625563171:AAFyoxqMiAua2gLEGVRYcYF00KhAa2aYyG0";
     long ChatID ;
     boolean LOGIN = false;
+    private String username = "Username";
+    private String password ="Password" ;
 
 
     @Autowired
@@ -31,8 +33,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
     private UserService UserService;
 
     public void onUpdateReceived(Update update){
-        String username = "Username";
-        String password ="Password" ;
+
 
         ChatID = update.getMessage().getChatId();
         String command = update.getMessage().getText();
@@ -81,7 +82,15 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 
         if(command.equals("/start")) {
 
-            MandarMensaje("Bienvenido, por favor, ingrese su usuario y contraseña para poder loguearse y acceder a los servicios de EventManager");
+            MandarMensaje("Bienvenido, ingrese su usuario y contraseña para poder loguearse y acceder a los servicios de EventManager. \n" +
+                    "Los comandos disponibles son :\n" +
+                    "login - Loguearse\n" +
+                    "username - Setear Username para loguerse\n" +
+                    "password - Setear Password para loguearse\n" +
+                    "buscarevento - Buscar Evento\n" +
+                    "agregarevento - Agregar evento\n" +
+                    "revisarevento - Revisar evento\n" +
+                    "resetear - Volver a loguerse con otra cuenta ");
 
         }
         if(command.contains("/buscarevento")){
