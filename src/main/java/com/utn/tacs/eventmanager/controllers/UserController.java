@@ -34,7 +34,8 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDTO user) throws CustomException {
-        userService.createUser(orikaMapper.map(user, User.class));
+        User newUser = orikaMapper.map(user, User.class);
+        userService.createUser(newUser);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
