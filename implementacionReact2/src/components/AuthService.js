@@ -1,7 +1,7 @@
 import decode from 'jwt-decode';
 export default class AuthService {
     constructor(domain) {
-        this.domain = domain || 'http://tacs-event-manager.herokuapp.com'
+        this.domain = domain || 'http://localhost:8080'
         this.fetch = this.fetch.bind(this)
         this.login = this.login.bind(this)
         this.getProfile = this.getProfile.bind(this)
@@ -10,25 +10,21 @@ export default class AuthService {
     login(username, password) {
         // consigo el token
         var link=this.domain;
-        return this.fetch('http://tacs-event-manager.herokuapp.com/users/login', {
+        return this.fetch(`${this.domain}/users/login`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify({
-                "username":username,
-                "password":password
+                username,
+                password
             })
         }).then(res => {
-
-            this.setToken(res.Authorization);
+            this.setToken(res.headers);
             return Promise.resolve(res);
-
 
         })
         .then(function () {
             console.log("ok");
-        }).catch(function () {
+        }).catch(err => {
+            console.log(err);
             console.log("failed");
             console.log(JSON.stringify({
                 "username":username,
@@ -93,7 +89,7 @@ export default class AuthService {
             ...options
         })
             .then(this._checkStatus)
-            .then(response => response.json())
+            //.then(response => response.json())
     }
 
     _checkStatus(response) {
