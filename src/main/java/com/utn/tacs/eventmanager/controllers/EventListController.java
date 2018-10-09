@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/events_lists")
 public class EventListController {
 
