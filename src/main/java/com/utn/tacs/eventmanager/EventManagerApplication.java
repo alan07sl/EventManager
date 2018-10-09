@@ -1,5 +1,6 @@
 package com.utn.tacs.eventmanager;
 
+import com.utn.tacs.eventmanager.services.TelegramIntegrationService;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.springframework.boot.SpringApplication;
@@ -8,12 +9,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.telegram.telegrambots.ApiContextInitializer;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @SpringBootApplication
 public class EventManagerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EventManagerApplication.class, args);
+            ApiContextInitializer.init();
+            TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+            try {
+                telegramBotsApi.registerBot(new TelegramIntegrationService());
+            } catch(TelegramApiException e) {
+                e.printStackTrace();
+            }
+          SpringApplication.run(EventManagerApplication.class, args);
 	}
 
 	@Bean

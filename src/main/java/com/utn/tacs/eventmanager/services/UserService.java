@@ -48,7 +48,7 @@ public class UserService {
         Optional<User> user = userRepository.findOne(Example.of(new User(username, null)));
 
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-            InitTelegramApi();
+
             return user.get();
         } else {
             throw new InvalidCredentialsException();
@@ -60,17 +60,5 @@ public class UserService {
     }
 
 
-    public void InitTelegramApi(){
-        ApiContextInitializer.init();
-        TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-        try {
-            telegramBotsApi.registerBot(new TelegramIntegrationService());
 
-
-        } catch (
-                TelegramApiException e) {
-            e.printStackTrace();
-        }
-
-    }
 }

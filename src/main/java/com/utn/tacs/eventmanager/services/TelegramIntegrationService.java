@@ -16,12 +16,7 @@ import java.util.Map;
 
 public class TelegramIntegrationService extends TelegramLongPollingBot {
 
-    static String BotToken = "625563171:AAFyoxqMiAua2gLEGVRYcYF00KhAa2aYyG0";
     long ChatID ;
-    boolean LOGIN = false;
-    private String username = "Username";
-    private String password ="Password" ;
-
 
     @Autowired
     private EventbriteService eventbriteService;
@@ -37,56 +32,35 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 
         ChatID = update.getMessage().getChatId();
         String command = update.getMessage().getText();
-        SendMessage message = new SendMessage();
-
-        if(command.equals("/login")) {
-            if((username.equals("Username")) || (password.equals("Password"))  )
+        System.out.println(command);
+        if(command.contains("/login")) {
+            MandarMensaje("Intentando loguearse");
+            List<String> parametros = ParsearComando(command);
+            System.out.println(parametros.get(0)+" " +parametros.get(1));
+            if( parametros.get(0).isEmpty() || parametros.get(1).isEmpty())
                 MandarMensaje("Please set your username and password to login");
             else{
 
                 try{
 
-                UserService.authenticateUser(username,password);
-                LOGIN = true;
+                UserService.authenticateUser(parametros.get(0),parametros.get(1));
+
                 MandarMensaje("Login Exitoso");
 
                 }catch(InvalidCredentialsException e){
 
-                    username = "Username";
-                    password = "Password";
                     MandarMensaje("Credenciales erroneas, por favor vuelva a ingresarlas");
                 }
-
+                
             }
         }
 
-        if(command.equals("/username")) {
-
-            List<String> parametros = ParsearComando(command);
-            password = parametros.get(0);
-            MandarMensaje("Username guardado");
-        }
-
-
-
-        if(command.equals("/password")) {
-            if(!username.isEmpty()){
-            List<String> parametros = ParsearComando(command);
-
-            password = parametros.get(0);
-            MandarMensaje("Contraseña guardada");
-
-            }else
-                MandarMensaje("Falta Ingresar username");
-        }
 
         if(command.equals("/start")) {
 
             MandarMensaje("Bienvenido, ingrese su usuario y contraseña para poder loguearse y acceder a los servicios de EventManager. \n" +
                     "Los comandos disponibles son :\n" +
                     "login - Loguearse\n" +
-                    "username - Setear Username para loguerse\n" +
-                    "password - Setear Password para loguearse\n" +
                     "buscarevento - Buscar Evento\n" +
                     "agregarevento - Agregar evento\n" +
                     "revisarevento - Revisar evento\n" +
@@ -94,8 +68,8 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 
         }
         if(command.contains("/buscarevento")){
-
-            if(LOGIN){
+            MandarMensaje("Buscando evento");
+            if((UserService.findCurrentUser())!= null) {
             List<String> parametros = ParsearComando(command);
 
             if(parametros.size() == 2){
@@ -120,8 +94,8 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 
 
         if(command.contains("/agregarevento")){
-
-            if(LOGIN){
+            MandarMensaje("Agregando evento");
+            if((UserService.findCurrentUser())!= null){
             List <String> parametros = ParsearComando(command);
             if(parametros.size() < 1){
 
@@ -148,8 +122,8 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 
 
         if(command.contains("/revisarevento")) {
-
-            if(LOGIN){
+            MandarMensaje("Revisando evento");
+            if((UserService.findCurrentUser())!= null){
             List<String> parametros = ParsearComando(command);
             if (parametros.size() < 1) {
                 long eventId = Long.parseLong(parametros.get(0));
