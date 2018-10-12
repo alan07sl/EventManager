@@ -51,3 +51,16 @@
    opacity: 0.6;
 }
 
+.input-with-error{
+    display: flex;
+    flex-direction: column;
+}
+
+.input-with-error span{
+    color: red;
+}
+
+.error{
+    color: red;
+}
+
