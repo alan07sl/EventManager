@@ -2,6 +2,7 @@
   "name": "event-manager",
   "version": "0.0.1",
   "dependencies": {
+    "dotenv": "^6.1.0",
     "final-form": "^4.10.0",
     "jwt-decode": "^2.2.0",
     "mdbreact": "^4.8.1",
@@ -11,7 +12,8 @@
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.12",
     "react-table": "^6.8.6",
-    "reactstrap": "^6.5.0"
+    "reactstrap": "^6.5.0",
+    "redux-zero": "^4.14.0"
   },
   "scripts": {
     "start": "react-scripts start",

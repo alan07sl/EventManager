@@ -2,22 +2,19 @@ import React, { Component } from 'react';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
 import './style.css';
-import AuthService from '../../services/AuthService';
+import ApiService from '../../services/apiService';
+import store from '../../store';
 
 class Login extends Component {
   constructor() {
     super();
-    this.Auth = new AuthService();
-  }
-  componentWillMount() {
-    if (this.Auth.loggedIn()) this.props.history.replace('/');
   }
 
   onSubmit(values) {
-    return this.Auth.login(values.username, values.password)
+    return ApiService.login(values.username, values.password)
       .then(() => {
-        this.props.history.replace('/');
-        window.alert('LOGIN SUCCESS!');
+        this.props.history.replace('/events');
+        store.setState({ ...store.getState(), user: { username: values.username } })
       })
       .catch(() => ({ [FORM_ERROR]: 'Usuario o contraseña incorrecta' }));
   }
@@ -31,10 +28,10 @@ class Login extends Component {
             validate={values => {
               const errors = {};
               if (!values.username) {
-                errors.username = 'Required';
+                errors.username = 'Campo Requerido';
               }
               if (!values.password) {
-                errors.password = 'Required';
+                errors.password = 'Campo Requerido';
               }
               return errors;
             }}
