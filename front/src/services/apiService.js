@@ -61,7 +61,7 @@ const requestUrl = (url, options) => {
   };
 
   if (loggedIn()) {
-    headers['Authorization'] = 'Bearer ' + getToken();
+    headers['Authorization'] = getToken();
   }
 
   return fetch(url, {
