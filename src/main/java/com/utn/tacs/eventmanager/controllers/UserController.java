@@ -23,9 +23,9 @@ import static com.utn.tacs.eventmanager.security.SecurityConstants.HEADER_STRING
 import static com.utn.tacs.eventmanager.security.SecurityConstants.TOKEN_PREFIX;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/users")
 public class UserController {
-
     @Autowired
     private MapperFacade orikaMapper;
 
