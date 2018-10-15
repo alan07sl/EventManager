@@ -5,6 +5,7 @@ import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.errors.InvalidCredentialsException;
 import com.utn.tacs.eventmanager.services.dto.EventsResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,6 +21,11 @@ import java.util.Map;
 public class TelegramIntegrationService extends TelegramLongPollingBot {
 
     long chatID;
+
+	@Value("${telegram.bot.token}")
+    private String botToken;
+	@Value("${telegram.bot.name}")
+    private String botName;
 
     @Autowired
     private EventbriteService eventbriteService;
@@ -212,11 +218,11 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
     }
 
     public String getBotUsername() {
-        return "EventManager" ;
+        return botName ;
     }
 
     public String getBotToken() {
-        return "625563171:AAFyoxqMiAua2gLEGVRYcYF00KhAa2aYyG0";
+        return botToken;
     }
 
     private List<String> ParsearComando(String comando){
