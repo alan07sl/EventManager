@@ -11,14 +11,15 @@ class SearchList extends React.Component {
       hits: [],
       page: null,
       isLoading: false,
-      isError: false
+      isError: false,
+      startIndex: this.props.startIndex || 0
     };
   }
 
   onInitialSearch = e => {
     e.preventDefault();
     const { value } = this.input;
-    this.search(value, 0);
+    this.search(value, this.state.startIndex);
   };
 
   onPaginatedSearch = () => {
@@ -35,7 +36,7 @@ class SearchList extends React.Component {
   };
 
   onSetResult = (result, page) =>
-    page === 0
+    page === this.props.startIndex
       ? this.setState(searchService.applySetResult(result))
       : this.setState(searchService.applyUpdateResult(result));
 

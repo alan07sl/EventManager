@@ -6,19 +6,22 @@ const getToken = () => localStorage.getItem('id_token');
 
 const clearToken = () => localStorage.removeItem('id_token');
 
-const getEvents = ({ page, query }) => {
-  return requestUrl(`/events?page=${page}&query=${query}`, {
+const getMyLists = ({ page, query }) =>
+  requestUrl(`/events_lists?page=${page}&name=${query}`, {
     method: 'GET'
   }).then(res => res.json());
-};
 
-const logout = () => {
-  return requestUrl(`/users/logout`, {
+const getEvents = ({ page, query }) =>
+  requestUrl(`/events?page=${page}&query=${query}`, {
+    method: 'GET'
+  }).then(res => res.json());
+
+const logout = () =>
+  requestUrl(`/users/logout`, {
     method: 'DELETE'
   })
     .then(() => clearToken())
     .catch(() => clearToken());
-};
 
 const login = (username, password) =>
   requestUrl(`/users/login`, {
@@ -71,10 +74,10 @@ const requestUrl = (path, options) => {
   if (loggedIn()) {
     headers['Authorization'] = getToken();
   }
-  return fetch(`${process.env.REACT_APP_API}${path}`, {  
+  return fetch(`${process.env.REACT_APP_API}${path}`, {
     headers,
     ...options
   }).then(_checkStatus);
 };
 
-export default { login, logout, getProfile, loggedIn, getEvents };
+export default { login, logout, getProfile, loggedIn, getEvents, getMyLists };

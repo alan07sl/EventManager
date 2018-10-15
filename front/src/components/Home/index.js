@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, NavLink, HashRouter } from 'react-router-dom';
 import EventList from '../EventList';
+import MyLists from '../MyLists';
 import ApiService from '../../services/apiService';
 import './style.css';
 
@@ -20,10 +21,12 @@ class Home extends Component {
           <ul className="header">
             <li>
               <NavLink to="/events-lists">Events</NavLink>
+              <NavLink to="/my-lists">My Lists</NavLink>
             </li>
           </ul>
           <div className="content">
             <Route path="/events-lists" component={EventList} />
+            <Route path="/my-lists" component={MyLists} />
           </div>
         </div>
       </HashRouter>
