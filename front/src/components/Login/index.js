@@ -13,7 +13,7 @@ class Login extends Component {
   onSubmit(values) {
     return ApiService.login(values.username, values.password)
       .then(() => {
-        this.props.history.replace('/events');
+        this.props.history.replace('/home');
         store.setState({ ...store.getState(), user: { username: values.username } })
       })
       .catch(() => ({ [FORM_ERROR]: 'Usuario o contraseña incorrecta' }));

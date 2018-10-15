@@ -1,14 +1,27 @@
 import decode from 'jwt-decode';
 
-const setToken = idToken => {
-  // Saves user token to localStorage
-  localStorage.setItem('id_token', idToken);
-};
+const setToken = idToken => localStorage.setItem('id_token', idToken);
 
 const getToken = () => localStorage.getItem('id_token');
 
+const clearToken = () => localStorage.removeItem('id_token');
+
+const getEvents = ({ page, query }) => {
+  return requestUrl(`/events?page=${page}&query=${query}`, {
+    method: 'GET'
+  }).then(res => res.json());
+};
+
+const logout = () => {
+  return requestUrl(`/users/logout`, {
+    method: 'DELETE'
+  })
+    .then(() => clearToken())
+    .catch(() => clearToken());
+};
+
 const login = (username, password) =>
-  requestUrl(`${process.env.REACT_APP_API}/users/login`, {
+  requestUrl(`/users/login`, {
     method: 'POST',
     headers: {},
     body: JSON.stringify({
@@ -35,11 +48,6 @@ const loggedIn = () => {
   return !!token && !isTokenExpired(token); // handwaiving here
 };
 
-const logout = () => {
-  // Clear user token and profile data from localStorage
-  localStorage.removeItem('id_token');
-};
-
 const getProfile = () => decode(getToken());
 
 const _checkStatus = response => {
@@ -53,7 +61,7 @@ const _checkStatus = response => {
   }
 };
 
-const requestUrl = (url, options) => {
+const requestUrl = (path, options) => {
   // performs api calls sending the required authentication headers
   const headers = {
     Accept: 'application/json',
@@ -63,11 +71,10 @@ const requestUrl = (url, options) => {
   if (loggedIn()) {
     headers['Authorization'] = getToken();
   }
-
-  return fetch(url, {
+  return fetch(`${process.env.REACT_APP_API}${path}`, {  
     headers,
     ...options
   }).then(_checkStatus);
 };
 
-export default { login, logout, getProfile, loggedIn };
+export default { login, logout, getProfile, loggedIn, getEvents };

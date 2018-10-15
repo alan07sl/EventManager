@@ -6,7 +6,7 @@ import { Provider } from 'redux-zero/react';
 import store from './store';
 
 import Login from './components/Login';
-import EventList from './components/EventList';
+import Home from './components/Home';
 
 require('dotenv').config();
 
@@ -15,7 +15,7 @@ ReactDOM.render(
     <Router>
       <div>
         <Route exact path="/" component={Login} />
-        <Route exact path="/events" component={EventList} />
+        <Route exact path="/home" component={Home} />
       </div>
     </Router>
   </Provider>,
