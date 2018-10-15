@@ -17,6 +17,11 @@ ul li:last-child {
   margin: 0;
 }
 
+.link-button {
+  background-color: transparent;
+  border-width: 0px;
+}
+
 img {
   float: left;
   display: block;

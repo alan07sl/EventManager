@@ -3,29 +3,67 @@ import { connect } from 'redux-zero/react';
 import withAuth from '../withAuth';
 import './styles.css';
 import SearchList from '../SearchList';
+import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import apiService from '../../services/apiService';
-
-import swal from 'sweetalert2';
+import popupService from '../../services/popupService';
 
 class MyLists extends React.Component {
-  deleteList = item => () => apiService.deleteEventList(item.id).then(() => this.searchList.reset());
+  deleteList = item => async () => {
+    try {
+      await apiService.deleteEventList(item.id);
+      popupService.successPopup('List Deleted !');
+      this.searchList.reset();
+    } catch (e) {
+      popupService.errorPopup();
+    }
+  };
+
+  addEvent = item => async () => {
+    try {
+      const { value: id } = await popupService.addEventList(`Add event to list: "${item.name}"`);
+
+      if (id) {
+        await apiService.addEventList(item.id, id);
+        popupService.successPopup(`Event ${id} added to list`);
+      }
+    } catch (e) {
+      const errorResponse = await e.response.json();
+      if (errorResponse.status === 404) {
+        popupService.errorPopup('Event not found');
+      } else {
+        popupService.errorPopup();
+      }
+    }
+  };
+
+  updateList = item => async () => {
+    try {
+      const { value: name } = await popupService.getEventListName(`Update list: "${item.name}"`);
+
+      if (name) {
+        await apiService.updateEventList(item.id, name);
+        popupService.successPopup('List Updated !');
+        this.searchList.reset();
+      }
+    } catch (e) {
+      popupService.errorPopup();
+    }
+  };
 
   addList = async () => {
     try {
-      const { value: name } = await swal({
-        title: 'Create new list',
-        input: 'text',
-        inputPlaceholder: 'List Name',
-        showCancelButton: true,
-        inputValidator: value => (!value || value.length > 22) && 'Name of list is mandatory (max length 22)'
-      });
+      const { value: name } = await popupService.getEventListName();
       if (name) {
-        return apiService.createEventList(name).then(() => swal('Good job!', 'List Created !', 'success'));
+        await apiService.createEventList(name);
+        popupService.successPopup('List Created !');
+        this.searchList.reset();
       }
-    } catch (e) {}
+    } catch (e) {
+      popupService.errorPopup();
+    }
   };
 
   render() {
@@ -43,9 +81,17 @@ class MyLists extends React.Component {
           displayItem={item => (
             <div className="list-row" key={item.id}>
               <a className="item">{item.name}</a>
-              <Button aria-label="Delete" onClick={this.deleteList(item)}>
-                <DeleteIcon />
-              </Button>
+              <div>
+                <Button aria-label="Add" onClick={this.addEvent(item)}>
+                  <AddIcon />
+                </Button>
+                <Button aria-label="Edit" onClick={this.updateList(item)}>
+                  <EditIcon />
+                </Button>
+                <Button aria-label="Delete" onClick={this.deleteList(item)}>
+                  <DeleteIcon />
+                </Button>
+              </div>
             </div>
           )}
         />
