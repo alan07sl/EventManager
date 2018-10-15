@@ -3,9 +3,6 @@ import apiService from '../services/apiService';
 
 export default function withAuth(AuthComponent) {
   return class AuthWrapped extends Component {
-    constructor() {
-      super();
-    }
     componentWillMount() {
       if (!apiService.loggedIn()) {
         this.props.history.replace('/');

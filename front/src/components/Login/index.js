@@ -4,19 +4,44 @@ import { FORM_ERROR } from 'final-form';
 import './style.css';
 import ApiService from '../../services/apiService';
 import store from '../../store';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import popupService from '../../services/popupService';
+import apiService from '../../services/apiService';
 
 class Login extends Component {
-  constructor() {
-    super();
-  }
-
   onSubmit(values) {
     return ApiService.login(values.username, values.password)
       .then(() => {
-        this.props.history.replace('/events');
-        store.setState({ ...store.getState(), user: { username: values.username } })
+        this.props.history.replace('/home');
+        store.setState({ ...store.getState(), user: { username: values.username } });
       })
       .catch(() => ({ [FORM_ERROR]: 'Usuario o contraseña incorrecta' }));
+  }
+
+  getLabel(label, meta) {
+    return meta.error && meta.touched ? meta.error : label;
+  }
+
+  register() {
+    popupService.register(async () => {
+      const userData = {
+        username: document.getElementById('swal-input1').value,
+        password: document.getElementById('swal-input2').value
+      };
+
+      if (!userData.password || !userData.username) {
+        throw new Error('Username and password is required');
+      }
+      try {
+        await apiService.register(userData.username, userData.password);
+      } catch(e) {
+        const errorResponse = await e.response.json();
+        throw new Error(errorResponse.description);
+      }
+
+      return userData;
+    }).then(() => popupService.successPopup('User created !'));
   }
 
   render() {
@@ -39,26 +64,38 @@ class Login extends Component {
               <form onSubmit={handleSubmit}>
                 <Field name="username">
                   {({ input, meta }) => (
-                    <div className="input-with-error">
-                      {(meta.error || meta.submitError) &&
-                        meta.touched && <span>{meta.error || meta.submitError}</span>}
-                      <input className="form-item" {...input} type="text" placeholder="Username" />
+                    <div>
+                      <TextField
+                        error={meta.error && meta.touched}
+                        margin="normal"
+                        {...input}
+                        type="text"
+                        label={this.getLabel('Username', meta)}
+                      />
                     </div>
                   )}
                 </Field>
                 <Field name="password">
                   {({ input, meta }) => (
-                    <div className="input-with-error">
-                      {meta.error && meta.touched && <span>{meta.error}</span>}
-                      <input className="form-item" {...input} type="password" placeholder="Password" />
+                    <div>
+                      <TextField
+                        error={meta.error && meta.touched}
+                        margin="normal"
+                        {...input}
+                        type="password"
+                        label={this.getLabel('Password', meta)}
+                      />
                     </div>
                   )}
                 </Field>
                 {submitError && <div className="error">{submitError}</div>}
                 <div className="buttons">
-                  <button className="form-submit" type="submit" disabled={submitting}>
-                    Log In
-                  </button>
+                  <Button margin="normal" className="form-submit" type="submit" disabled={submitting}>
+                    Login
+                  </Button>
+                  <Button margin="normal" onClick={this.register}>
+                    Register
+                  </Button>
                 </div>
               </form>
             )}
