@@ -13,9 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Optional;
 
@@ -58,7 +55,5 @@ public class UserService {
     public User findCurrentUser() {
         return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
     }
-
-
 
 }

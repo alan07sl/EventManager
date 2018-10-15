@@ -1,22 +1,25 @@
 package com.utn.tacs.eventmanager.services;
 
+import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.errors.InvalidCredentialsException;
 import com.utn.tacs.eventmanager.services.dto.EventsResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+@Component
 public class TelegramIntegrationService extends TelegramLongPollingBot {
 
-    long ChatID ;
+    long chatID;
 
     @Autowired
     private EventbriteService eventbriteService;
@@ -27,138 +30,162 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
     @Autowired
     private UserService UserService;
 
+    private Map authenticatedChats = new HashMap<Long, User>();
+
     public void onUpdateReceived(Update update){
 
 
-        ChatID = update.getMessage().getChatId();
-        String command = update.getMessage().getText();
-        System.out.println(command);
-        if(command.contains("/login")) {
-            MandarMensaje("Intentando loguearse");
-            List<String> parametros = ParsearComando(command);
-            System.out.println(parametros.get(0)+" " +parametros.get(1));
-            if( parametros.get(0).isEmpty() || parametros.get(1).isEmpty())
-                MandarMensaje("Please set your username and password to login");
-            else{
+        chatID = update.getMessage().getChatId();
+        String commandLine = update.getMessage().getText();
 
-                try{
+        List<String> parametros = ParsearComando(commandLine);
 
-                UserService.authenticateUser(parametros.get(0),parametros.get(1));
+        switch(commandLine.split(" ")[0]) {
+            case "/login":
+                login(parametros);
+                break;
+            case "/start":
+                mandarMensaje("Bienvenido, ingrese su usuario y contraseña para poder loguearse y acceder a los servicios de EventManager. \n" +
+                        "Los comandos disponibles son :\n" +
+                        "login - Loguearse\n" +
+                        "buscarevento - Buscar Evento\n" +
+                        "agregarevento - Agregar evento\n" +
+                        "revisareventos - Revisar eventos de una lista de eventos\n" +
+                        "logout - Desloguearse ");
+                break;
+            case "/buscarevento":
+                buscarEvento(parametros);
+                break;
+            case "/agregarevento":
+                agregarEvento(parametros);
+                break;
+            case "/revisareventos":
+                revisarEventosDeUnaLista(parametros);
+                break;
+            case "/logout":
+                logout();
+                break;
+            default:
+                mandarMensaje("Comando incorrecto");
+                break;
+        }
 
-                MandarMensaje("Login Exitoso");
+    }
 
-                }catch(InvalidCredentialsException e){
+    private void logout() {
+        if(authenticatedChats.containsKey(chatID)) {
+            authenticatedChats.remove(chatID);
+            mandarMensaje("Logout exitoso.");
+        } else {
+            mandarMensaje("No estabas logeado.");
+        }
+    }
 
-                    MandarMensaje("Credenciales erroneas, por favor vuelva a ingresarlas");
+    private void revisarEventosDeUnaLista(List<String> parametros) {
+        if(authenticatedChats.containsKey(chatID)){
+            if (parametros.size() < 1) {
+                long eventId = Long.parseLong(parametros.get(0));
+                Map<String,Object> event = new HashMap<>();
+                try {
+                    event = eventbriteService.getEvent(eventId);
+                    mandarMensaje(event.values().toString());
+
+                }catch(CustomException e){
+
+                    mandarMensaje(e.getMessage());
+
                 }
-                
-            }
-        }
+            } else
+                mandarMensaje("Falta un parametros");
 
+        } else
+            mandarMensaje("Debe loguearse primero");
+    }
 
-        if(command.equals("/start")) {
-
-            MandarMensaje("Bienvenido, ingrese su usuario y contraseña para poder loguearse y acceder a los servicios de EventManager. \n" +
-                    "Los comandos disponibles son :\n" +
-                    "login - Loguearse\n" +
-                    "buscarevento - Buscar Evento\n" +
-                    "agregarevento - Agregar evento\n" +
-                    "revisarevento - Revisar evento\n" +
-                    "resetear - Volver a loguerse con otra cuenta ");
-
-        }
-        if(command.contains("/buscarevento")){
-            MandarMensaje("Buscando evento");
-            if((UserService.findCurrentUser())!= null) {
-            List<String> parametros = ParsearComando(command);
-
+    private void agregarEvento(List<String> parametros) {
+        if(authenticatedChats.containsKey(chatID)){
             if(parametros.size() == 2){
-                try{
-
-                    EventsResponseDTO response = eventbriteService.getEvents(parametros.get(0),parametros.get(1));
-                    MandarMensaje(response.events.toString());
-
-                }catch (CustomException e){
-
-                    MandarMensaje(e.getMessage());
-
-                }
-            }else {
-                MandarMensaje("Falta un parametro");
-            }
-            }else{
-
-                MandarMensaje("Debe loguearse primero");
-            }
-        }
-
-
-        if(command.contains("/agregarevento")){
-            MandarMensaje("Agregando evento");
-            if((UserService.findCurrentUser())!= null){
-            List <String> parametros = ParsearComando(command);
-            if(parametros.size() < 1){
 
                 Integer EventListId =  Integer.parseInt(parametros.get(0));
                 Long EventID=  Long.parseLong(parametros.get(1));
 
                 try{
 
-                 eventListService.addEvent(EventListId,EventID,UserService.findCurrentUser());
-                 MandarMensaje("Agregado Correctamente");
+                    eventListService.addEvent(EventListId,EventID, (User) authenticatedChats.get(chatID));
+                    mandarMensaje("Evento agregado correctamente a tu lista.");
 
                 }catch(CustomException e){
-                    MandarMensaje(e.getMessage());
+                    mandarMensaje(e.getMessage());
                 }
 
             }
             else
-                MandarMensaje("Falta un parametro");
+                mandarMensaje("Agregar evento recibe solo 2 parametros, donde el primero es el id de la lista y el segundo es el id del evento a agregar");
 
-            }else
-                 MandarMensaje("Debe loguearse primero");
+        }else
+            mandarMensaje("Debe loguearse primero");
+    }
 
-        }
+    private void buscarEvento(List<String> parametros) {
+        if(authenticatedChats.containsKey(chatID)) {
 
+            if(parametros.size() == 1){
+                try{
 
-        if(command.contains("/revisarevento")) {
-            MandarMensaje("Revisando evento");
-            if((UserService.findCurrentUser())!= null){
-            List<String> parametros = ParsearComando(command);
-            if (parametros.size() < 1) {
-                long eventId = Long.parseLong(parametros.get(0));
-                Map<String,Object> Event = new HashMap<>();
-                try {
-                    Event = eventbriteService.getEvent(eventId);
-                    MandarMensaje(Event.values().toString());
+                    EventsResponseDTO response = eventbriteService.getEvents("1",parametros.get(0));
+                    if(response.events.isEmpty()){
+                        mandarMensaje("No hay eventos con ese criterio de busqueda.");
+                    } else {
+                        mandarMensaje(response.events.get(0).toString());
+                    }
 
-                }catch(CustomException e){
+                }catch (CustomException e){
 
-                    MandarMensaje(e.getMessage());
+                    mandarMensaje(e.getMessage());
 
                 }
-            } else
-                MandarMensaje("Falta un parametros");
+            }else {
+                mandarMensaje("Buscar evento recibe solo 1 parametro, que indica el criterio de busqueda");
 
-        } else
-            MandarMensaje("Debe loguearse primero");
+            }
+        }else{
 
-
+            mandarMensaje("Debe loguearse primero");
+        }
     }
 
+    private void login(List<String> parametros) {
+        mandarMensaje("Intentando loguearse");
+        System.out.println(parametros.get(0)+" " +parametros.get(1));
+        if( parametros.get(0).isEmpty() || parametros.get(1).isEmpty())
+            mandarMensaje("Please set your username and password to login");
+        else{
+
+            try{
+
+                User user = UserService.authenticateUser(parametros.get(0),parametros.get(1));
+                authenticatedChats.put(chatID, user);
+
+                mandarMensaje("Login Exitoso");
+
+            }catch(InvalidCredentialsException e){
+
+                mandarMensaje("Credenciales erroneas, por favor vuelva a ingresarlas");
+            }
+
+        }
     }
 
-    public void MandarMensaje(String message){
+    public void mandarMensaje(String message){
 
         SendMessage msg = new SendMessage();
         msg.setText(message);
-        msg.setChatId(ChatID);
+        msg.setChatId(chatID);
         try {
             execute(msg);
         }catch (TelegramApiException e){
             e.printStackTrace();
         }
-
 
     }
 
@@ -170,7 +197,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
         return "625563171:AAFyoxqMiAua2gLEGVRYcYF00KhAa2aYyG0";
     }
 
-    public List<String> ParsearComando(String comando){
+    private List<String> ParsearComando(String comando){
         List<String> parametros = new ArrayList<String>() ;
         String[] param = comando.split(" ");
         for(String item : param) {
