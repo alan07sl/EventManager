@@ -136,7 +136,15 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
                     if(response.events.isEmpty()){
                         mandarMensaje("No hay eventos con ese criterio de busqueda.");
                     } else {
-                        mandarMensaje(response.events.get(0).toString());
+
+                    	StringBuilder sb = new StringBuilder();
+                    	response.events.forEach(e -> appendRelevant(e,sb));
+                    	sb.append("Recuerde que puede guardar cualquier evento que le interese utilizando el comando " +
+								"/agregarevento seguido del ID de su lista de eventos y el ID del evento que le interese " +
+								"que podra encontrar en esta misma lista.\n" +
+								"Por ejemplo: /agregarevento 1234123 23567892");
+
+						mandarMensaje(sb.toString());
                     }
 
                 }catch (CustomException e){
@@ -154,7 +162,21 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
         }
     }
 
-    private void login(List<String> parametros) {
+	private void appendRelevant(Map<String,Object> e, StringBuilder sb) {
+		sb.append("Nombre: ");
+    	sb.append(((Map)e.get("name")).get("text"));
+		sb.append("\n");
+		sb.append("Id: ");
+		sb.append(e.get("id"));
+		sb.append("\n");
+		sb.append("Link: ");
+		sb.append(e.get("url"));
+		sb.append("\n");
+		sb.append("---------------------------------");
+		sb.append("\n");
+	}
+
+	private void login(List<String> parametros) {
         mandarMensaje("Intentando loguearse");
         System.out.println(parametros.get(0)+" " +parametros.get(1));
         if( parametros.get(0).isEmpty() || parametros.get(1).isEmpty())

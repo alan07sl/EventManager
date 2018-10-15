@@ -22,3 +22,5 @@ Hecha para proveer documentación out of the box respecto de la API.
 
 ### Arrancando el proyecto
 - Para arrancar el proyecto correr el comando `mvn spring-boot:run` 
+
+### [Link al Bot de Telegram](https://web.telegram.org/#/im?p=@EventM_bot)
