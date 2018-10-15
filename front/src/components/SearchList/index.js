@@ -2,6 +2,8 @@ import React from 'react';
 import searchService from '../../services/searchService';
 import apiService from '../../services/apiService';
 import PaginatedList from '../PaginatedList';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
 class SearchList extends React.Component {
   constructor(props) {
@@ -18,13 +20,17 @@ class SearchList extends React.Component {
 
   onInitialSearch = e => {
     e.preventDefault();
-    const { value } = this.input;
-    this.search(value, this.state.startIndex);
+    this.reset();
   };
+
+  reset = () => {
+    const value = this.state.search || '';
+    this.search(value, this.state.startIndex);
+  }
 
   onPaginatedSearch = () => {
     if (this.state.page < this.state.pageCount) {
-      return this.search(this.input.value, this.state.page + 1);
+      return this.search(this.state.search || '', this.state.page + 1);
     }
   };
 
@@ -42,13 +48,15 @@ class SearchList extends React.Component {
 
   onSetError = () => this.setState(searchService.applySetError);
 
+  handleChange = e => this.setState({ search: e.target.value });
+
   render() {
     return (
       <div className="page">
         <div className="interactions">
           <form type="submit" onSubmit={this.onInitialSearch}>
-            <input type="text" ref={node => (this.input = node)} />
-            <button type="submit">Search</button>
+            <Button type="submit">Search</Button>
+            <TextField type="text" onChange={this.handleChange} />
           </form>
         </div>
 
@@ -58,7 +66,7 @@ class SearchList extends React.Component {
           isLoading={this.state.isLoading}
           page={this.state.page}
           onPaginatedSearch={this.onPaginatedSearch}
-          displayItem ={this.props.displayItem}
+          displayItem={this.props.displayItem}
         />
       </div>
     );

@@ -4,6 +4,8 @@ import { FORM_ERROR } from 'final-form';
 import './style.css';
 import ApiService from '../../services/apiService';
 import store from '../../store';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 class Login extends Component {
 
@@ -14,6 +16,10 @@ class Login extends Component {
         store.setState({ ...store.getState(), user: { username: values.username } })
       })
       .catch(() => ({ [FORM_ERROR]: 'Usuario o contraseña incorrecta' }));
+  }
+
+  getLabel(label,meta) {
+    return meta.error && meta.touched ? meta.error : label;
   }
 
   render() {
@@ -36,26 +42,23 @@ class Login extends Component {
               <form onSubmit={handleSubmit}>
                 <Field name="username">
                   {({ input, meta }) => (
-                    <div className="input-with-error">
-                      {(meta.error || meta.submitError) &&
-                        meta.touched && <span>{meta.error || meta.submitError}</span>}
-                      <input className="form-item" {...input} type="text" placeholder="Username" />
+                    <div>
+                      <TextField error={meta.error && meta.touched} margin="normal" {...input} type="text" label={this.getLabel("Username",meta)} />
                     </div>
                   )}
                 </Field>
                 <Field name="password">
                   {({ input, meta }) => (
-                    <div className="input-with-error">
-                      {meta.error && meta.touched && <span>{meta.error}</span>}
-                      <input className="form-item" {...input} type="password" placeholder="Password" />
+                    <div>
+                      <TextField error={meta.error && meta.touched} margin="normal" {...input} type="password" label={this.getLabel("Password",meta)} />
                     </div>
                   )}
                 </Field>
                 {submitError && <div className="error">{submitError}</div>}
                 <div className="buttons">
-                  <button className="form-submit" type="submit" disabled={submitting}>
-                    Log In
-                  </button>
+                  <Button margin="normal" className="form-submit" type="submit" disabled={submitting}>
+                    Login
+                  </Button>
                 </div>
               </form>
             )}

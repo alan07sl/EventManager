@@ -11,6 +11,11 @@ const getMyLists = ({ page, query }) =>
     method: 'GET'
   }).then(res => res.json());
 
+const deleteEventList = id =>
+  requestUrl(`/events_lists/${id}`, {
+    method: 'DELETE'
+  });
+
 const getEvents = ({ page, query }) =>
   requestUrl(`/events?page=${page}&query=${query}`, {
     method: 'GET'
@@ -80,4 +85,4 @@ const requestUrl = (path, options) => {
   }).then(_checkStatus);
 };
 
-export default { login, logout, getProfile, loggedIn, getEvents, getMyLists };
+export default { login, logout, getProfile, loggedIn, getEvents, getMyLists, deleteEventList };
