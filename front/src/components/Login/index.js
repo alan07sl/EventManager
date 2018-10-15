@@ -6,9 +6,6 @@ import ApiService from '../../services/apiService';
 import store from '../../store';
 
 class Login extends Component {
-  constructor() {
-    super();
-  }
 
   onSubmit(values) {
     return ApiService.login(values.username, values.password)

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, NavLink, HashRouter, Redirect } from 'react-router-dom';
+import { Route, NavLink, HashRouter } from 'react-router-dom';
 import EventList from '../EventList';
 import ApiService from '../../services/apiService';
 import './style.css';
