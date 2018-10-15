@@ -11,6 +11,35 @@ const getMyLists = ({ page, query }) =>
     method: 'GET'
   }).then(res => res.json());
 
+const createEventList = name =>
+  requestUrl(`/events_lists`, {
+    method: 'POST',
+    body: JSON.stringify({
+      name
+    })
+  });
+
+const addEventList = (id, eventId) =>
+  requestUrl(`/events_lists/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      id: eventId
+    })
+  });
+
+const updateEventList = (id, name) =>
+  requestUrl(`/events_lists/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      name
+    })
+  });
+
+const deleteEventList = id =>
+  requestUrl(`/events_lists/${id}`, {
+    method: 'DELETE'
+  });
+
 const getEvents = ({ page, query }) =>
   requestUrl(`/events?page=${page}&query=${query}`, {
     method: 'GET'
@@ -22,6 +51,15 @@ const logout = () =>
   })
     .then(() => clearToken())
     .catch(() => clearToken());
+
+const register = (username, password) =>
+  requestUrl(`/users`, {
+    method: 'POST',
+    body: JSON.stringify({
+      username,
+      password
+    })
+  });
 
 const login = (username, password) =>
   requestUrl(`/users/login`, {
@@ -80,4 +118,16 @@ const requestUrl = (path, options) => {
   }).then(_checkStatus);
 };
 
-export default { login, logout, getProfile, loggedIn, getEvents, getMyLists };
+export default {
+  login,
+  register,
+  logout,
+  getProfile,
+  loggedIn,
+  createEventList,
+  getEvents,
+  getMyLists,
+  deleteEventList,
+  updateEventList,
+  addEventList
+};
