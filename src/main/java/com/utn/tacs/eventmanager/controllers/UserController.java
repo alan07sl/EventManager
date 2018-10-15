@@ -23,9 +23,9 @@ import static com.utn.tacs.eventmanager.security.SecurityConstants.HEADER_STRING
 import static com.utn.tacs.eventmanager.security.SecurityConstants.TOKEN_PREFIX;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/users")
 public class UserController {
-
     @Autowired
     private MapperFacade orikaMapper;
 
@@ -34,7 +34,8 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDTO user) throws CustomException {
-        userService.createUser(orikaMapper.map(user, User.class));
+        User newUser = orikaMapper.map(user, User.class);
+        userService.createUser(newUser);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
