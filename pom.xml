@@ -99,6 +99,9 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.0</version>
 				<configuration>
+					<excludes>
+						<exclude>com/utn/tacs/eventmanager/security/**/*</exclude>
+					</excludes>
 					<rules>
 						<rule implementation="org.jacoco.maven.RuleConfiguration">
 							<element>BUNDLE</element>
