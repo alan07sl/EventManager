@@ -46,4 +46,14 @@ const register = preConfirm =>
     preConfirm
   });
 
-export default { errorPopup, getEventListName, addEventList, successPopup, register };
+const userDetail = userData =>
+  swal({
+    title: 'User Data',
+    html: `</div><b>Username: </b>${userData.username}</div>
+           <div><b>Alarms: </b>${userData.alarms}</div>
+           <div><b>Events Lists: </b>${userData.eventsLists} </div>
+           <div><b>Last Login: </b>${userData.lastLogin ? userData.lastLogin: '-'} </div>`,
+    showCloseButton: true
+  });
+
+export default { errorPopup, getEventListName, addEventList, successPopup, register, userDetail };

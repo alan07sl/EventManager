@@ -40,6 +40,18 @@ const deleteEventList = id =>
     method: 'DELETE'
   });
 
+const getUsers = ({ page, query }) => {
+  const baseUrl = `/users?page=${page}`;
+  return requestUrl(query ? `${baseUrl}&name=${query}` : baseUrl, {
+    method: 'GET'
+  }).then(res => res.json());
+};
+
+const getUserDetail = userId =>
+  requestUrl(`/users/${userId}`, {
+    method: 'GET'
+  }).then(res => res.json());
+
 const getEvents = ({ page, query }) =>
   requestUrl(`/events?page=${page}&query=${query}`, {
     method: 'GET'
@@ -91,6 +103,8 @@ const loggedIn = () => {
 
 const getProfile = () => decode(getToken());
 
+const isAdmin = () => getProfile().admin;
+
 const _checkStatus = response => {
   // raises an error in case response status is not a success
   if (response.status >= 200 && response.status < 300) {
@@ -123,11 +137,14 @@ export default {
   register,
   logout,
   getProfile,
+  isAdmin,
   loggedIn,
   createEventList,
   getEvents,
   getMyLists,
   deleteEventList,
   updateEventList,
-  addEventList
+  addEventList,
+  getUsers,
+  getUserDetail
 };
