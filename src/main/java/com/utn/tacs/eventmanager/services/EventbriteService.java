@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import java.time.Clock;
+import java.time.LocalDate;
+
 @Service
 public class EventbriteService {
 
@@ -33,17 +36,34 @@ public class EventbriteService {
     @Autowired
     private AsyncRestTemplate asyncRestTemplate;
 
-    public EventsResponseDTO getEvents(String page, String query) throws CustomException{
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString(eventbriteURL + "/events/search")
-                .queryParam("token", token)
-                .queryParam("q", query)
-                .queryParam("page", page);
+    public EventsResponseDTO getEvents(String page, String query, boolean justRecentEvents) throws CustomException{
+
+        UriComponentsBuilder builder;
+
+        if(justRecentEvents) {
+            LocalDate date = LocalDate.now(Clock.systemUTC()).minusDays(1);
+            builder = UriComponentsBuilder
+                    .fromUriString(eventbriteURL + "/events/search")
+                    .queryParam("token", token)
+                    .queryParam("q", query)
+                    .queryParam("page", page)
+                    .queryParam("date_modified.range_start", date);
+        } else {
+            builder = UriComponentsBuilder
+                    .fromUriString(eventbriteURL + "/events/search")
+                    .queryParam("token", token)
+                    .queryParam("q", query)
+                    .queryParam("page", page);
+        }
         try {
             return restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, EventsResponseDTO.class).getBody();
         } catch(HttpClientErrorException e) {
             throw new CustomException(e.getMessage(),e.getLocalizedMessage(),e.getStatusCode());
         }
+    }
+
+    public EventsResponseDTO getEvents(String page, String query) throws CustomException {
+        return getEvents(page,query,false);
     }
 
     public Map<String,Object> getEvent(Long id) throws CustomException{
