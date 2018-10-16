@@ -4,24 +4,24 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+/**
+ * Will save the last 20 interesting events for the user.
+ */
 @Data
 @Entity
-public class Alarm {
+public class Event {
 
 	private @Id
 	@GeneratedValue
 	Long id;
-	@Column
+	@Column(length = 1000)
 	private String name;
-	@Column
-	private String criteria;
 	@ManyToOne
+	@JoinColumn(name = "F_USER_ID", referencedColumnName = "ID")
 	private User user;
 
-	public Alarm(String name, String criteria, User user) {
+	public Event(String name, User user) {
 		this.name = name;
-		this.criteria = criteria;
 		this.user = user;
 	}
-
 }
