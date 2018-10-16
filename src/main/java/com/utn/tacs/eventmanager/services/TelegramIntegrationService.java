@@ -38,7 +38,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
         chatID = update.getMessage().getChatId();
         String commandLine = update.getMessage().getText();
 
-        List<String> parametros = ParsearComando(commandLine);
+        List<String> parametros = parsearComando(commandLine);
 
         switch(commandLine.split(" ")[0]) {
             case "/login":
@@ -184,24 +184,16 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 	}
 
 	private void login(List<String> parametros) {
-        mandarMensaje("Intentando loguearse");
-        System.out.println(parametros.get(0)+" " +parametros.get(1));
-        if( parametros.get(0).isEmpty() || parametros.get(1).isEmpty())
+        if(parametros.size() < 2)
             mandarMensaje("Please set your username and password to login");
         else{
-
             try{
-
                 User user = UserService.authenticateUser(parametros.get(0),parametros.get(1));
                 authenticatedChats.put(chatID, user);
-
                 mandarMensaje("Login Exitoso");
-
             }catch(InvalidCredentialsException e){
-
                 mandarMensaje("Credenciales erroneas, por favor vuelva a ingresarlas");
             }
-
         }
     }
 
@@ -226,7 +218,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
         return "625563171:AAFyoxqMiAua2gLEGVRYcYF00KhAa2aYyG0";
     }
 
-    private List<String> ParsearComando(String comando){
+    private List<String> parsearComando(String comando){
         List<String> parametros = new ArrayList<String>() ;
         String[] param = comando.split(" ");
         for(String item : param) {
