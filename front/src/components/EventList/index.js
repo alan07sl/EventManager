@@ -10,7 +10,7 @@ class EventList extends React.Component {
     return (
       <SearchList
         nameService={"getEvents"}
-        displayItem={item => <Event event={item} />}
+        displayItem={item => <Event key={item.id} event={item} />}
       />
     );
   }
