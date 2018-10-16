@@ -43,7 +43,9 @@ public class UserService {
 
     public User authenticateUser(String username, String password) throws InvalidCredentialsException {
         Optional<User> user = userRepository.findOne(Example.of(new User(username, null)));
+
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
+
             return user.get();
         } else {
             throw new InvalidCredentialsException();
@@ -53,4 +55,5 @@ public class UserService {
     public User findCurrentUser() {
         return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
     }
+
 }

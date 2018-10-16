@@ -4,15 +4,12 @@ import com.utn.tacs.eventmanager.dao.EventList;
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.errors.EventListNotFoundException;
-import com.utn.tacs.eventmanager.errors.UserExistException;
 import com.utn.tacs.eventmanager.repositories.EventListRepository;
 import com.utn.tacs.eventmanager.repositories.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -26,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties="springBootApp.postConstructOff=true")
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class EventListServiceTest {

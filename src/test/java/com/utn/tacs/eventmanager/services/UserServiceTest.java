@@ -8,7 +8,6 @@ import com.utn.tacs.eventmanager.errors.UserNotFoundException;
 import com.utn.tacs.eventmanager.repositories.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties="springBootApp.postConstructOff=true")
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserServiceTest {

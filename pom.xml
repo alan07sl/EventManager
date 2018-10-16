@@ -67,6 +67,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.telegram</groupId>
+			<artifactId>telegrambots</artifactId>
+			<version>4.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
 			<version>3.4.0</version>
@@ -99,6 +104,9 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.0</version>
 				<configuration>
+					<excludes>
+						<exclude>com/utn/tacs/eventmanager/security/**/*</exclude>
+					</excludes>
 					<rules>
 						<rule implementation="org.jacoco.maven.RuleConfiguration">
 							<element>BUNDLE</element>
