@@ -45,7 +45,9 @@ public class UserController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size ) {
 
-        Page<User> result = userService.searchPaginated(new User(name, null), page, size);
+        User sampleUser = new User(name);
+
+        Page<User> result = userService.searchPaginated(sampleUser, page, size);
 
         ListDTO<UserDTO> list = new ListDTO<>();
         list.setPageNumber(page);

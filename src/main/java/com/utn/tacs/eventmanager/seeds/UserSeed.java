@@ -16,8 +16,11 @@ class UserSeed {
     @Bean
     CommandLineRunner initDatabase(UserRepository repository) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        User user1 = new User("test1", encoder.encode("test1"));
+        user1.setIsAdmin(true);
+
         return args -> {
-            log.info("Preloading " + repository.save(new User("test1", encoder.encode("test1"))));
+            log.info("Preloading " + repository.save(user1));
             log.info("Preloading " + repository.save(new User("test2", encoder.encode("test2"))));
         };
     }

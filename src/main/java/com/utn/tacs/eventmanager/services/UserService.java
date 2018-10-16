@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -26,7 +27,8 @@ public class UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     public void createUser(User user) throws CustomException {
-        if (userRepository.exists(Example.of(new User(user.getUsername(), null)))) {
+        User example = new User(user.getUsername());
+        if (userRepository.exists(Example.of(example))) {
             throw new UserExistException(user.getUsername());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));

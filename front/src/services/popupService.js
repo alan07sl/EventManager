@@ -1,4 +1,6 @@
+import React from 'react';
 import swal from 'sweetalert2';
+import moment from 'moment';
 
 const errorPopup = (title = 'Ops! Something failed') => swal({ title, type: 'error', timer: 2000 });
 
@@ -7,6 +9,13 @@ const successPopup = (title = 'OK') =>
     title,
     type: 'success',
     timer: 2000
+  });
+
+const infoPopup = (title = 'INFO', text = '') =>
+  swal({
+    title,
+    text,
+    type: 'success'
   });
 
 const getEventListName = (title = 'Create new List') =>
@@ -46,4 +55,16 @@ const register = preConfirm =>
     preConfirm
   });
 
-export default { errorPopup, getEventListName, addEventList, successPopup, register };
+const userDetail = userData =>
+  swal({
+    title: 'User Data',
+    html: `</div><b>Username: </b>${userData.username}</div>
+           <div><b>Alarms: </b>${userData.alarms}</div>
+           <div><b>Events Lists: </b>${userData.eventsLists} </div>
+           <div><b>Last Login: </b>${
+             userData.lastLogin ? moment(userData.lastLogin).format('DD-MM-YYYY HH:mm') : '-'
+           } </div>`,
+    showCloseButton: true
+  });
+
+export default { errorPopup, infoPopup, getEventListName, addEventList, successPopup, register, userDetail };
