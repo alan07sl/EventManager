@@ -75,7 +75,7 @@ public class UserControllerTest {
 	public void shouldGetUser() throws Exception {
 		Page<User> result = new PageImpl<>(Arrays.asList());
 
-		Mockito.when(userService.searchPaginated(new User(null,null),1, 10)).thenReturn(result);
+		Mockito.when(userService.searchPaginated(new User(null),1, 10)).thenReturn(result);
 
 		mockMvc.perform(get("/users"))
 				.andExpect(status().isOk());

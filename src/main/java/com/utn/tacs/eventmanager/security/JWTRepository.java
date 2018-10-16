@@ -34,9 +34,10 @@ public class JWTRepository {
         return this.tokens.contains(token);
     }
 
-    public String create(String username) {
+    public String create(String username, boolean isAdmin) {
         String token = JWT.create()
                 .withSubject(username)
+                .withClaim("admin", isAdmin)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
         addToken(token);
