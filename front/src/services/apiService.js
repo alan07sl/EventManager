@@ -57,6 +57,11 @@ const getEvents = ({ page, query }) =>
     method: 'GET'
   }).then(res => res.json());
 
+const getEventStats = eventId =>
+  requestUrl(`/events/${eventId}/users`, {
+    method: 'GET'
+  }).then(res => res.json());
+
 const logout = () =>
   requestUrl(`/users/logout`, {
     method: 'DELETE'
@@ -141,6 +146,7 @@ export default {
   loggedIn,
   createEventList,
   getEvents,
+  getEventStats,
   getMyLists,
   deleteEventList,
   updateEventList,

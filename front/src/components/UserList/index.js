@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'redux-zero/react';
 import withAuth from '../withAuth';
-import './styles.css';
 import SearchList from '../SearchList';
 import ViewIcon from '@material-ui/icons/Visibility';
 import Button from '@material-ui/core/Button';
