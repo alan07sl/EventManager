@@ -45,8 +45,7 @@ public class UserController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size ) {
 
-        User sampleUser = new User(name, null);
-        sampleUser.setIsAdmin(null);
+        User sampleUser = new User(name);
 
         Page<User> result = userService.searchPaginated(sampleUser, page, size);
 
