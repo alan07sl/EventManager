@@ -16,7 +16,6 @@ public class Alarm {
 	@Column
 	private String criteria;
 	@ManyToOne
-	@JoinColumn(name = "F_USER_ID")
 	private User user;
 
 	public Alarm(String name, String criteria, User user) {

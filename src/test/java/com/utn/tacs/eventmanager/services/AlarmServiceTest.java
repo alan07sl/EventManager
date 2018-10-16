@@ -5,6 +5,7 @@ import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.AlarmExistException;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.repositories.AlarmRepository;
+import com.utn.tacs.eventmanager.repositories.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,14 @@ public class AlarmServiceTest {
     @Autowired
     private AlarmRepository alarmRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     public void shouldCreateAlarm() throws CustomException {
         User user = new User("alan", "1234");
+        userRepository.save(user);
+
         alarmService.createAlarm(new Alarm("Alarma de Alan", null, user));
         assertThat(alarmRepository.exists(Example.of(new Alarm("Alarma de Alan", null, user))), equalTo(true));
     }
@@ -39,6 +45,7 @@ public class AlarmServiceTest {
     @Test
     public void shouldFailCreateAlarmBecauseAlreadyExist() throws CustomException {
         User user = new User("alan", "1234");
+        userRepository.save(user);
         Alarm alarm = new Alarm("Alarma de Alan", null, user);
         alarmService.createAlarm(alarm);
         try{
