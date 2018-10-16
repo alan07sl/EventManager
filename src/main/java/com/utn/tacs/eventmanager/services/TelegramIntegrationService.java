@@ -5,6 +5,7 @@ import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.errors.InvalidCredentialsException;
 import com.utn.tacs.eventmanager.services.dto.EventsResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class TelegramIntegrationService extends TelegramLongPollingBot {
 
     long chatID;
@@ -81,12 +83,19 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 
     private void revisarEventosDeUnaLista(List<String> parametros) {
         if(authenticatedChats.containsKey(chatID)){
-            if (parametros.size() < 1) {
-                long eventId = Long.parseLong(parametros.get(0));
+            if (parametros.size() == 1) {
+                int eventListId = Integer.parseInt(parametros.get(0));
                 Map<String,Object> event = new HashMap<>();
                 try {
-                    event = eventbriteService.getEvent(eventId);
-                    mandarMensaje(event.values().toString());
+                    StringBuilder sb = new StringBuilder();
+                    eventListService.findById(eventListId).getEvents().forEach(e -> {
+                        try {
+                            appendRelevant(eventbriteService.getEvent(e.longValue()), sb);
+                        } catch (CustomException e1) {
+                            e1.printStackTrace();
+                        }
+                    });
+                    mandarMensaje(sb.toString());
 
                 }catch(CustomException e){
 
@@ -94,7 +103,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
 
                 }
             } else
-                mandarMensaje("Falta un parametros");
+                mandarMensaje("Revisar eventos recibe solo un parametro, el id de la lista de eventos a revisar.");
 
         } else
             mandarMensaje("Debe loguearse primero");
