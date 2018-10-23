@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -44,7 +43,7 @@ public class UserService {
     }
 
     public User authenticateUser(String username, String password) throws InvalidCredentialsException {
-        Optional<User> user = userRepository.findOne(Example.of(new User(username, null)));
+        Optional<User> user = userRepository.findOne(Example.of(new User(username)));
 
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
 

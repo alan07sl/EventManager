@@ -67,6 +67,15 @@ public class UserServiceTest {
         assertThat(authenticateUser.getUsername(), equalTo(user.getUsername()));
     }
 
+    @Test
+    public void shouldAuthenticateAdminUser() throws CustomException {
+        User user = new User("martin", "1234");
+        user.setIsAdmin(true);
+        userService.createUser(user);
+        User authenticateUser = userService.authenticateUser("martin", "1234");
+        assertThat(authenticateUser.getUsername(), equalTo(user.getUsername()));
+    }
+
     @Test(expected = InvalidCredentialsException.class)
     public void shouldFailOnInvalidEmail() throws CustomException {
         User user = new User("martin", "1234");
