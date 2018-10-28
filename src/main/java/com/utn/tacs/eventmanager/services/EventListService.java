@@ -77,4 +77,10 @@ public class EventListService {
     public Integer usersInterested(Long eventId) {
         return eventListRepository.findByEventsContains(eventId).stream().map((EventList e) -> e.getUser()).distinct().collect(Collectors.toList()).size();
     }
+
+    public void deleteFromEventList(Integer eventListId, Long eventId) throws CustomException{
+        EventList eventList = findById(eventListId);
+        eventList.getEvents().remove(eventId);
+        eventListRepository.save(eventList);
+    }
 }

@@ -3,12 +3,17 @@ import { connect } from 'redux-zero/react';
 import withAuth from '../withAuth';
 import './styles.css';
 import SearchList from '../SearchList';
+import PopupList from '../PopupList';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
+import ViewIcon from '@material-ui/icons/Visibility';
 import Button from '@material-ui/core/Button';
 import apiService from '../../services/apiService';
 import popupService from '../../services/popupService';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import noContentImage from '../../assets/no_content.jpg';
 
 class MyLists extends React.Component {
   deleteList = item => async () => {
@@ -19,6 +24,17 @@ class MyLists extends React.Component {
     } catch (e) {
       popupService.errorPopup();
     }
+  };
+
+  deleteEventFromList = (eventId, listId) => async () => {
+    try {
+      await apiService.deleteFromEventList(listId,eventId);
+      popupService.successPopup('Event Deleted !');
+    } catch (e) {
+      console.log(e)
+      popupService.errorPopup();
+    }
+    this[`popupList${listId}`].close();
   };
 
   addEvent = item => async () => {
@@ -82,6 +98,30 @@ class MyLists extends React.Component {
             <div className="list-row" key={item.id}>
               <a className="item">{item.name}</a>
               <div>
+                <Button aria-label="View" onClick={() => this[`popupList${item.id}`].open()}>
+                  <ViewIcon />
+                </Button>
+                <PopupList
+                  ref={instance => {
+                    this[`popupList${item.id}`] = instance;
+                  }}
+                  title="Events"
+                  itemsService={apiService.getEventsForList(item.id)}
+                  itemMapper={event => (
+                    <ListItem key={event.id}>
+                      <img className="image" src={event.logo ? event.logo.url : noContentImage} />
+                      <ListItemText primary={event.name.text} />
+                      <div>
+                        <Button
+                          aria-label="Delete"
+                          onClick={this.deleteEventFromList(event.id, item.id)}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </div>
+                    </ListItem>
+                  )}
+                />
                 <Button aria-label="Add" onClick={this.addEvent(item)}>
                   <AddIcon />
                 </Button>

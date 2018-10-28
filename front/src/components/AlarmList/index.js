@@ -10,14 +10,6 @@ import popupService from '../../services/popupService';
 import apiService from '../../services/apiService';
 
 class AlarmList extends React.Component {
-  viewAlarmDetail = alarmId => async () => {
-    try {
-      const userData = await apiService.getUserDetail(alarmId);
-      popupService.userDetail(userData);
-    } catch (e) {
-      popupService.errorPopup();
-    }
-  };
 
   deleteAlarm = alarmId => async () => {
     try {
@@ -41,7 +33,14 @@ class AlarmList extends React.Component {
           if (!userData.alarmName || !userData.criteria) {
             throw new Error('Name and criteria are required');
           }
-          await apiService.createAlarm(userData.alarmName, userData.criteria);
+
+          try {
+            await apiService.createAlarm(userData.alarmName, userData.criteria);
+          } catch (e) {
+            const errorResponse = await e.response.json();
+            throw new Error(errorResponse.description);
+          }
+
           return userData;
         })
         .then(result => {
@@ -71,12 +70,9 @@ class AlarmList extends React.Component {
             <div className="list-row" key={item.id}>
               <a className="item">{item.name}</a>
               <div>
-              <Button onClick={this.viewAlarmDetail(item.id)}>
-                <ViewIcon />
-              </Button>
-              <Button onClick={this.deleteAlarm(item.id)}>
-                <DeleteIcon />
-              </Button>
+                <Button onClick={this.deleteAlarm(item.id)}>
+                  <DeleteIcon />
+                </Button>
               </div>
             </div>
           )}

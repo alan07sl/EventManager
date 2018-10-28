@@ -1,0 +1,7 @@
+.appBar {
+  position: relative !important;
+}
+
+.title {
+  flex: 1;
+}

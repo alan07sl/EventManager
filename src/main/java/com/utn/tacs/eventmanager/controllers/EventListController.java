@@ -120,4 +120,10 @@ public class EventListController {
         EventList eventList = eventListService.findById(eventListId);
         return new ResponseEntity<>(eventbriteService.getEvents(eventList.getEvents()),HttpStatus.OK);
     }
+
+    @DeleteMapping("/{eventListId}/events/{eventId}")
+    public ResponseEntity<Object> deleteEventFromEventList(@PathVariable Integer eventListId,@PathVariable Long eventId) throws CustomException {
+        eventListService.deleteFromEventList(eventListId,eventId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

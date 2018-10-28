@@ -111,6 +111,8 @@
                         <exclude>com/utn/tacs/eventmanager/seeds/**/*</exclude>
                         <exclude>com/utn/tacs/eventmanager/config/**/*</exclude>
                         <exclude>com/utn/tacs/eventmanager/configuration/**/*</exclude>
+						<exclude>com/utn/tacs/eventmanager/EventManagerApplication</exclude>
+						<exclude>com/utn/tacs/eventmanager/services/TelegramIntegration</exclude>
 					</excludes>
 					<rules>
 						<rule implementation="org.jacoco.maven.RuleConfiguration">

@@ -86,6 +86,16 @@ const getEventsFrom = date =>
     method: 'GET'
   }).then(res => res.json());
 
+const deleteFromEventList = (id, eventId) =>
+  requestUrl(`/events_lists/${id}/events/${eventId}`, {
+    method: 'DELETE'
+  });
+
+const getEventsForList = id => () =>
+  requestUrl(`/events_lists/${id}/events`, {
+    method: 'GET'
+  }).then(res => res.json());
+
 const getLists = ({ page, query }) =>
   requestUrl(`/events_lists/all?page=${page}&name=${query}`, {
     method: 'GET'
@@ -181,6 +191,8 @@ export default {
   createEventList,
   getEvents,
   getEventsFrom,
+  getEventsForList,
+  deleteFromEventList,
   getEventStats,
   getMyLists,
   deleteEventList,
