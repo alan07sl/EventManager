@@ -23,4 +23,7 @@ Hecha para proveer documentación out of the box respecto de la API.
 ### Arrancando el proyecto
 - Para arrancar el proyecto correr el comando `mvn spring-boot:run` 
 
+### Front-end
+El front-end de la aplicacion puede encontrarse en la siguiente [URL](https://tacs-2374c.firebaseapp.com)
+
 ### [Link al Bot de Telegram](https://web.telegram.org/#/im?p=@EventM_bot)
