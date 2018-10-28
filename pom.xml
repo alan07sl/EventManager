@@ -112,7 +112,8 @@
                         <exclude>com/utn/tacs/eventmanager/config/**/*</exclude>
                         <exclude>com/utn/tacs/eventmanager/configuration/**/*</exclude>
 						<exclude>com/utn/tacs/eventmanager/EventManagerApplication.class</exclude>
-						<exclude>com/utn/tacs/eventmanager/services/TelegramIntegrationSevice.class</exclude>
+						<exclude>com/utn/tacs/eventmanager/services/TelegramIntegrationService.class</exclude>
+						<exclude>com/utn/tacs/eventmanager/errors/UserUnauthorizedException.class</exclude>
 					</excludes>
 					<rules>
 						<rule implementation="org.jacoco.maven.RuleConfiguration">
