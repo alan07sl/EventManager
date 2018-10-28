@@ -4,6 +4,7 @@ import apiService from '../../services/apiService';
 import PaginatedList from '../PaginatedList';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Loader from '../Loader';
 
 class SearchList extends React.Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class SearchList extends React.Component {
   reset = () => {
     const value = this.state.search || '';
     this.search(value, this.state.startIndex);
-  }
+  };
 
   onPaginatedSearch = () => {
     if (this.state.page < this.state.pageCount) {
@@ -41,10 +42,11 @@ class SearchList extends React.Component {
       .catch(this.onSetError);
   };
 
-  onSetResult = (result, page) =>
-    page === this.props.startIndex
+  onSetResult = (result, page) => {
+    return page === (this.props.startIndex || 0)
       ? this.setState(searchService.applySetResult(result))
       : this.setState(searchService.applyUpdateResult(result));
+  };
 
   onSetError = () => this.setState(searchService.applySetError);
 
@@ -53,6 +55,7 @@ class SearchList extends React.Component {
   render() {
     return (
       <div className="page">
+        <Loader isLoading={this.state.isLoading}/>
         <div className="interactions">
           <form type="submit" onSubmit={this.onInitialSearch}>
             <Button type="submit">Search</Button>

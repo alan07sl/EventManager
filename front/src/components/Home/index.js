@@ -3,6 +3,9 @@ import { Route, NavLink, HashRouter } from 'react-router-dom';
 import EventList from '../EventList';
 import MyLists from '../MyLists';
 import UserList from '../UserList';
+import AlarmList from '../AlarmList';
+import Lists from '../Lists';
+import Stats from '../Stats';
 import ApiService from '../../services/apiService';
 import './style.css';
 
@@ -23,13 +26,19 @@ class Home extends Component {
             <li>
               <NavLink to="/events-lists">Events</NavLink>
               <NavLink to="/my-lists">My Lists</NavLink>
+              <NavLink to="/alarms">Alarms</NavLink>
               { ApiService.isAdmin() ? <NavLink to="/users">Users</NavLink>:null }
+              { ApiService.isAdmin() ? <NavLink to="/all-lists">Lists</NavLink>:null }
+              { ApiService.isAdmin() ? <NavLink to="/stats">Stats</NavLink>:null }
             </li>
           </ul>
           <div className="content">
             <Route path="/events-lists" component={EventList} />
             <Route path="/my-lists" component={MyLists} />
+            <Route path="/alarms" component={AlarmList} />
             <Route path="/users" component={UserList} />
+            <Route path="/all-lists" component={Lists} />
+            <Route path="/stats" component={Stats} />
           </div>
         </div>
       </HashRouter>

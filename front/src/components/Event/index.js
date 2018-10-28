@@ -40,7 +40,9 @@ class Event extends Component {
       <div className="container">
         <img className="image" src={logoUrl} />
         <div className="detail">
-          <div className="name">{event.name.text}</div>
+          <div className="name">
+            {event.name.text.length < 50 ? event.name.text : `${event.name.text.substring(0, 47)}...`}
+          </div>
           <div className="date">
             <img className="calendar-icon" src={calendarIcon} />
             <Moment locale="es" format="LLLL" date={event.start.local} />

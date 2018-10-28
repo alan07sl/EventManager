@@ -124,7 +124,7 @@ public class EventListControllerTest {
 
         Page<EventList> result = new PageImpl<>(Arrays.asList(result1));
 
-        Mockito.when(eventListService.searchPaginated("",2,10)).thenReturn(result);
+        Mockito.when(eventListService.searchPaginated("",2,10, null)).thenReturn(result);
 
 		mockMvc.perform(get("/events_lists?page=2")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.pageNumber").isNumber())

@@ -16,7 +16,7 @@ class Login extends Component {
         this.props.history.replace('/home');
         store.setState({ ...store.getState(), user: { username: values.username } });
       })
-      .catch(() => ({ [FORM_ERROR]: 'Usuario o contraseña incorrecta' }));
+      .catch(() => ({ [FORM_ERROR]: 'Incorrect user/password' }));
   }
 
   getLabel(label, meta) {
@@ -24,24 +24,29 @@ class Login extends Component {
   }
 
   register() {
-    popupService.register(async () => {
-      const userData = {
-        username: document.getElementById('swal-input1').value,
-        password: document.getElementById('swal-input2').value
-      };
+    popupService
+      .register(async () => {
+        const userData = {
+          username: document.getElementById('swal-input1').value,
+          password: document.getElementById('swal-input2').value
+        };
 
-      if (!userData.password || !userData.username) {
-        throw new Error('Username and password is required');
-      }
-      try {
-        await apiService.register(userData.username, userData.password);
-      } catch(e) {
-        const errorResponse = await e.response.json();
-        throw new Error(errorResponse.description);
-      }
+        if (!userData.password || !userData.username) {
+          throw new Error('Username and password is required');
+        }
+        try {
+          await apiService.register(userData.username, userData.password);
+        } catch (e) {
+          const errorResponse = await e.response.json();
+          throw new Error(errorResponse.description);
+        }
 
-      return userData;
-    }).then(() => popupService.successPopup('User created !'));
+        return userData;
+      })
+      .then(result => {
+        if(!result.dismiss)
+          popupService.successPopup('User created !');
+      });
   }
 
   render() {
@@ -53,10 +58,10 @@ class Login extends Component {
             validate={values => {
               const errors = {};
               if (!values.username) {
-                errors.username = 'Campo Requerido';
+                errors.username = 'Required Field';
               }
               if (!values.password) {
-                errors.password = 'Campo Requerido';
+                errors.password = 'Required Field';
               }
               return errors;
             }}

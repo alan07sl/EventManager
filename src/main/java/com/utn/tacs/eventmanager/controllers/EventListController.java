@@ -2,6 +2,7 @@ package com.utn.tacs.eventmanager.controllers;
 
 import com.utn.tacs.eventmanager.controllers.dto.*;
 import com.utn.tacs.eventmanager.dao.EventList;
+import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.repositories.EventListRepository;
 import com.utn.tacs.eventmanager.services.EventListService;
@@ -36,12 +37,9 @@ public class EventListController {
     @Autowired
     private MapperFacade orikaMapper;
 
-    @GetMapping
-    public ResponseEntity<ListDTO<EventListDTO>> getEventsLists(@RequestParam(value = "name", required = false, defaultValue = "") String name,
-           @RequestParam(value = "page", defaultValue = "1") Integer page,
-           @RequestParam(value = "size", defaultValue = "10") Integer size ) {
 
-        Page<EventList> result = eventListService.searchPaginated(name, page, size);
+    private ListDTO<EventListDTO> searchEventList(String name, Integer page, Integer size, User user) {
+        Page<EventList> result = eventListService.searchPaginated(name, page, size, user);
 
         ListDTO<EventListDTO> list = new ListDTO<>();
         list.setPageNumber(page);
@@ -51,6 +49,24 @@ public class EventListController {
         list.setNext(result.hasNext() ? "/events_lists?page="+ (list.getPageNumber() + 1) + "&name=" + name + "&size=" + size : null);
         list.setPrev(list.getPageNumber() > 1 ? "/events_lists?page="+ (list.getPageNumber() - 1) + "&name=" + name + "&size=" + size : null);
 
+        return list;
+    }
+
+    @GetMapping
+    public ResponseEntity<ListDTO<EventListDTO>> getEventsLists(@RequestParam(value = "name", required = false, defaultValue = "") String name,
+           @RequestParam(value = "page", defaultValue = "1") Integer page,
+           @RequestParam(value = "size", defaultValue = "10") Integer size ) {
+
+        ListDTO<EventListDTO> list = searchEventList(name, page, size, userService.findCurrentUser());
+        return new ResponseEntity<>(list,HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ListDTO<EventListDTO>> getAllEventsLists(@RequestParam(value = "name", required = false, defaultValue = "") String name,
+                                                                @RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                                @RequestParam(value = "size", defaultValue = "10") Integer size ) {
+
+        ListDTO<EventListDTO> list = searchEventList(name, page, size, null);
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
 

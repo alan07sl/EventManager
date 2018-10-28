@@ -55,6 +55,19 @@ const register = preConfirm =>
     preConfirm
   });
 
+const createAlarm = preConfirm =>
+  swal({
+    title: 'Create Alarm',
+    html:
+      '<input id="swal-input1" class="swal2-input" placeholder="Alarm name" maxlength="20">' +
+      '<input id="swal-input2" class="swal2-input" placeholder="Criteria" maxlength="20">',
+    focusConfirm: false,
+    showCancelButton: true,
+    expectRejections: true,
+    confirmButtonText: 'Accept',
+    preConfirm
+  });
+
 const userDetail = userData =>
   swal({
     title: 'User Data',
@@ -67,4 +80,13 @@ const userDetail = userData =>
     showCloseButton: true
   });
 
-export default { errorPopup, infoPopup, getEventListName, addEventList, successPopup, register, userDetail };
+export default {
+  errorPopup,
+  infoPopup,
+  getEventListName,
+  addEventList,
+  successPopup,
+  register,
+  userDetail,
+  createAlarm
+};

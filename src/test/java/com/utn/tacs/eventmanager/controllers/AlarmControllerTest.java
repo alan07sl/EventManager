@@ -2,10 +2,13 @@ package com.utn.tacs.eventmanager.controllers;
 
 import com.google.gson.Gson;
 import com.utn.tacs.eventmanager.controllers.dto.AlarmDTO;
+import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.services.AlarmService;
+import com.utn.tacs.eventmanager.services.UserService;
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,6 +30,9 @@ public class AlarmControllerTest {
 	private AlarmService alarmService;
 
 	@MockBean
+	private UserService userService;
+
+	@Autowired
 	private MapperFacade orikaMapper;
 
 	@Test
@@ -35,6 +41,8 @@ public class AlarmControllerTest {
 		AlarmDTO alarmDTO = new AlarmDTO();
 		alarmDTO.setName("Alarma de test");
 		alarmDTO.setCriteria("unCriterio");
+
+		Mockito.when(userService.findCurrentUser()).thenReturn(new User("aaa"));
 
 		mockMvc.perform(post("/alarms")
 				.contentType(MediaType.APPLICATION_JSON)

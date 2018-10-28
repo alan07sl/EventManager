@@ -13,7 +13,7 @@ require('dotenv').config();
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <div>
+      <div className="mainContainer">
         <Route exact path="/" component={Login} />
         <Route exact path="/home" component={Home} />
       </div>
