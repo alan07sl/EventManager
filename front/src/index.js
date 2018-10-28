@@ -8,8 +8,6 @@ import store from './store';
 import Login from './components/Login';
 import Home from './components/Home';
 
-require('dotenv').config();
-
 ReactDOM.render(
   <Provider store={store}>
     <Router>
