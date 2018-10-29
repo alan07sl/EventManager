@@ -57,8 +57,52 @@ const getEvents = ({ page, query }) =>
     method: 'GET'
   }).then(res => res.json());
 
+const getAlarms = ({ page, query }) =>
+  requestUrl(`/alarms?page=${page}&name=${query}`, {
+    method: 'GET'
+  }).then(res => res.json());
+
+const deleteAlarm = alarmId =>
+  requestUrl(`/alarms/${alarmId}`, {
+    method: 'DELETE'
+  });
+
+const createAlarm = (name, criteria) =>
+  requestUrl('/alarms', {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      criteria
+    })
+  });
+
 const getEventStats = eventId =>
   requestUrl(`/events/${eventId}/users`, {
+    method: 'GET'
+  }).then(res => res.json());
+
+const getEventsFrom = date =>
+  requestUrl(`/events_lists/events?from=${date}`, {
+    method: 'GET'
+  }).then(res => res.json());
+
+const deleteFromEventList = (id, eventId) =>
+  requestUrl(`/events_lists/${id}/events/${eventId}`, {
+    method: 'DELETE'
+  });
+
+const getEventsForList = id => () =>
+  requestUrl(`/events_lists/${id}/events`, {
+    method: 'GET'
+  }).then(res => res.json());
+
+const getLists = ({ page, query }) =>
+  requestUrl(`/events_lists/all?page=${page}&name=${query}`, {
+    method: 'GET'
+  }).then(res => res.json());
+
+const getEventListMatch = (eventId1, eventId2) =>
+  requestUrl(`/events_lists/match?eventListId1=${eventId1}&eventListId2=${eventId2}`, {
     method: 'GET'
   }).then(res => res.json());
 
@@ -146,11 +190,19 @@ export default {
   loggedIn,
   createEventList,
   getEvents,
+  getEventsFrom,
+  getEventsForList,
+  deleteFromEventList,
   getEventStats,
   getMyLists,
   deleteEventList,
   updateEventList,
   addEventList,
   getUsers,
-  getUserDetail
+  getUserDetail,
+  getAlarms,
+  createAlarm,
+  deleteAlarm,
+  getLists,
+  getEventListMatch
 };

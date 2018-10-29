@@ -1,0 +1,23 @@
+.containerStats {
+    display: flex;
+    flex-direction: column;
+}
+
+.buttonStats {
+    padding: 15px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.numberStats {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.textStats {
+    font-size: 20px;
+    align-self: center;
+    font-family: sans-serif;
+    padding: 5px;
+}

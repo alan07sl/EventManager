@@ -107,7 +107,7 @@ public class EventListServiceTest {
 
         eventListRepository.saveAll(Arrays.asList(eventList1, eventList2));
 
-        Page<EventList> result = eventListService.searchPaginated("", 1 , 1);
+        Page<EventList> result = eventListService.searchPaginated("", 1 , 1, null);
         assertThat(result.getTotalPages(), equalTo(2));
         assertThat(result.getTotalElements(), equalTo(2L));
     }

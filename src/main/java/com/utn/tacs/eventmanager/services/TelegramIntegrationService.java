@@ -145,7 +145,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
                     } else {
 
                     	StringBuilder sb = new StringBuilder();
-                    	response.events.forEach(e -> appendRelevant(e,sb));
+                    	response.events.subList(0,10).forEach(e -> appendRelevant(e,sb));
                     	sb.append("Recuerde que puede guardar cualquier evento que le interese utilizando el comando " +
 								"/agregarevento seguido del ID de su lista de eventos y el ID del evento que le interese " +
 								"que podra encontrar en esta misma lista.\n" +

@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class AlarmDTO {
 
+	private Long id;
 	private String name;
 	private String criteria;
 

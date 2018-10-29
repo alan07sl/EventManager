@@ -67,13 +67,20 @@ public class EventListService {
         return events.size();
     }
 
-    public Page<EventList> searchPaginated(String name, Integer page, Integer size) {
+    public Page<EventList> searchPaginated(String name, Integer page, Integer size, User user) {
         EventList eventList = new EventList(name.length() > 0 ? name : null);
+        eventList.setUser(user);
         Pageable pageable = new PageRequest(page - 1, size);
         return eventListRepository.findAll(Example.of(eventList), pageable);
     }
 
     public Integer usersInterested(Long eventId) {
         return eventListRepository.findByEventsContains(eventId).stream().map((EventList e) -> e.getUser()).distinct().collect(Collectors.toList()).size();
+    }
+
+    public void deleteFromEventList(Integer eventListId, Long eventId) throws CustomException{
+        EventList eventList = findById(eventListId);
+        eventList.getEvents().remove(eventId);
+        eventListRepository.save(eventList);
     }
 }

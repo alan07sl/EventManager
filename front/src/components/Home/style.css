@@ -1,5 +1,5 @@
 body {
-  background-color: #1abc9c;
+  background-color: #2d72e1;
   padding: 20px;
   margin: 0;
 }
@@ -40,7 +40,7 @@ ul.header li a {
   margin-bottom: 10px;
 }
 .active {
-  background-color: #3a04ff;
+  background-color: #0ac003;
 }
 
 .main-container {
@@ -70,7 +70,7 @@ ul.header li a {
   font-family: 'Raleway', sans-serif;
   height: 35px;
   color: #fff;
-  background-color: #1abc9c;
+  background-color: #2d72e1;
   border: none;
   letter-spacing: 0.2rem;
   transition: 0.3s opacity ease;

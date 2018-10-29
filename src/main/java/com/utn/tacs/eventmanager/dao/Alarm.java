@@ -24,4 +24,9 @@ public class Alarm {
 		this.user = user;
 	}
 
+	public Alarm(String name, User user) {
+		this.name = name;
+		this.user = user;
+	}
+
 }
