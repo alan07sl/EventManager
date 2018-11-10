@@ -1,11 +1,13 @@
 package com.utn.tacs.eventmanager.services;
 
+import com.mongodb.Mongo;
 import com.utn.tacs.eventmanager.dao.EventList;
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.errors.EventListNotFoundException;
 import com.utn.tacs.eventmanager.repositories.EventListRepository;
 import com.utn.tacs.eventmanager.repositories.UserRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -25,7 +28,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties="springBootApp.postConstructOff=true")
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class EventListServiceTest {
 
     @Autowired
@@ -36,6 +38,17 @@ public class EventListServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private Mongo mongo;
+
+    @Autowired
+    private MongoDbFactory mongoDbFactory;
+
+    @Before
+    public void before() {
+        mongo.dropDatabase(mongoDbFactory.getDb().getName());
+    }
 
     @Test
     public void shouldCreateEventList() {
@@ -50,17 +63,17 @@ public class EventListServiceTest {
 
         EventList eventList = new EventList("a");
         eventList.setCreationDate(new Date());
-        eventList.setUser(user);
+        eventList.setUserId(user.getId());
         eventList = eventListRepository.save(eventList);
         EventList newEventList = new EventList("bb");
 
-        eventListService.updateEventList(eventList.getId().intValue(), newEventList, user);
+        eventListService.updateEventList(eventList.getId(), newEventList, user);
         assertThat(eventListRepository.exists(Example.of(newEventList)), equalTo(true));
     }
 
     @Test(expected = EventListNotFoundException.class)
     public void shouldFailUpdateEventListBecauseNotExist() throws CustomException {
-        eventListService.updateEventList(123123, new EventList("1"), null);
+        eventListService.updateEventList("a", new EventList("1"), null);
     }
 
     @Test
@@ -69,7 +82,7 @@ public class EventListServiceTest {
         user = userRepository.save(user);
         EventList eventList = new EventList("a");
         eventList.setCreationDate(new Date());
-        eventList.setUser(user);
+        eventList.setUserId(user.getId());
         eventList = eventListRepository.save(eventList);
         eventListService.delete(eventList.getId(), user);
         assertThat(eventListRepository.exists(Example.of(eventList)), equalTo(false));
@@ -81,13 +94,13 @@ public class EventListServiceTest {
         user = userRepository.save(user);
         EventList eventList = new EventList("a");
         eventList.setCreationDate(new Date());
-        eventList.setUser(user);
+        eventList.setUserId(user.getId());
         eventList = eventListRepository.save(eventList);
 
-        eventListService.addEvent(eventList.getId().intValue(), 1L, user);
-        eventListService.addEvent(eventList.getId().intValue(), 2L, user);
+        eventListService.addEvent(eventList.getId(), 1L, user);
+        eventListService.addEvent(eventList.getId(), 2L, user);
 
-        eventList = eventListService.findById(eventList.getId().intValue());
+        eventList = eventListService.findById(eventList.getId());
 
         assertThat(eventList.getEvents().size(), equalTo(2));
     }

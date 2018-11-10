@@ -84,7 +84,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
     private void revisarEventosDeUnaLista(List<String> parametros) {
         if(authenticatedChats.containsKey(chatID)){
             if (parametros.size() == 1) {
-                int eventListId = Integer.parseInt(parametros.get(0));
+                String eventListId = parametros.get(0);
                 Map<String,Object> event = new HashMap<>();
                 try {
                     StringBuilder sb = new StringBuilder();
@@ -113,7 +113,7 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
         if(authenticatedChats.containsKey(chatID)){
             if(parametros.size() == 2){
 
-                Integer EventListId =  Integer.parseInt(parametros.get(0));
+                String EventListId =  parametros.get(0);
                 Long EventID=  Long.parseLong(parametros.get(1));
 
                 try{

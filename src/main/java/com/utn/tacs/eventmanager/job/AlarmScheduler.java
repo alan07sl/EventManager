@@ -41,7 +41,7 @@ public class AlarmScheduler {
 			try {
 				EventsResponseDTO events = eventbriteService.getEvents("1", alarm.getCriteria());
 
-				events.getEvents().forEach((map) -> eventService.addEvent(new Event(((LinkedHashMap)map.get("name")).get("text").toString(), alarm.getUser())));
+				events.getEvents().forEach((map) -> eventService.addEvent(new Event(((LinkedHashMap)map.get("name")).get("text").toString(), alarm.getUserId())));
 
 			} catch (CustomException e) {
 				e.printStackTrace();

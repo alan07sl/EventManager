@@ -1,32 +1,26 @@
 package com.utn.tacs.eventmanager.dao;
 
 import lombok.Data;
-
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
 
 @Data
-@Entity
 public class Alarm {
 
 	private @Id
-	@GeneratedValue
-	Long id;
-	@Column
+	String id;
 	private String name;
-	@Column
 	private String criteria;
-	@ManyToOne
-	private User user;
+	private String userId;
 
-	public Alarm(String name, String criteria, User user) {
+	public Alarm(String name, String criteria, String user) {
 		this.name = name;
 		this.criteria = criteria;
-		this.user = user;
+		this.userId = user;
 	}
 
-	public Alarm(String name, User user) {
+	public Alarm(String name, String user) {
 		this.name = name;
-		this.user = user;
+		this.userId = user;
 	}
 
 }

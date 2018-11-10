@@ -73,28 +73,28 @@ public class EventListController {
     @PostMapping
     public ResponseEntity<Object> createEventList(@Valid @RequestBody EventListDTO eventListDTO) {
         EventList eventList = orikaMapper.map(eventListDTO, EventList.class);
-        eventList.setUser(userService.findCurrentUser());
+        eventList.setUserId(userService.findCurrentUser().getId());
         eventListService.createEventList(eventList);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/{eventListId}")
-    public ResponseEntity<Object> addEvent(@PathVariable Integer eventListId, @Valid @RequestBody EventDTO event) throws CustomException {
+    public ResponseEntity<Object> addEvent(@PathVariable String eventListId, @Valid @RequestBody EventDTO event) throws CustomException {
         eventbriteService.getEvent(event.getId());
         eventListService.addEvent(eventListId,event.getId(), userService.findCurrentUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{eventListId}")
-    public ResponseEntity<Object> modifyEventList(@PathVariable Integer eventListId,
+    public ResponseEntity<Object> modifyEventList(@PathVariable String eventListId,
                                                   @Valid @RequestBody EventListDTO eventList) throws CustomException {
         eventListService.updateEventList(eventListId,orikaMapper.map(eventList, EventList.class), userService.findCurrentUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{eventListId}")
-    public ResponseEntity<Object> deleteEventList(@PathVariable Integer eventListId) throws CustomException {
-        eventListService.delete(eventListId.longValue(), userService.findCurrentUser());
+    public ResponseEntity<Object> deleteEventList(@PathVariable String eventListId) throws CustomException {
+        eventListService.delete(eventListId, userService.findCurrentUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -104,8 +104,8 @@ public class EventListController {
     }
 
     @GetMapping("/match")
-    public ResponseEntity<List<Map<String,Object>>> getCommonEvents(@RequestParam("eventListId1") Integer eventListId,
-                                                                    @RequestParam("eventListId2") Integer eventListId2) throws CustomException{
+    public ResponseEntity<List<Map<String,Object>>> getCommonEvents(@RequestParam("eventListId1") String eventListId,
+                                                                    @RequestParam("eventListId2") String eventListId2) throws CustomException{
         EventList eventList1 = eventListService.findById(eventListId);
         EventList eventList2 = eventListService.findById(eventListId2);
 
@@ -116,13 +116,13 @@ public class EventListController {
     }
 
     @GetMapping("/{eventListId}/events")
-    public ResponseEntity<List<Map<String,Object>>> getEventsFromEventList(@PathVariable Integer eventListId) throws CustomException {
+    public ResponseEntity<List<Map<String,Object>>> getEventsFromEventList(@PathVariable String eventListId) throws CustomException {
         EventList eventList = eventListService.findById(eventListId);
         return new ResponseEntity<>(eventbriteService.getEvents(eventList.getEvents()),HttpStatus.OK);
     }
 
     @DeleteMapping("/{eventListId}/events/{eventId}")
-    public ResponseEntity<Object> deleteEventFromEventList(@PathVariable Integer eventListId,@PathVariable Long eventId) throws CustomException {
+    public ResponseEntity<Object> deleteEventFromEventList(@PathVariable String eventListId,@PathVariable Long eventId) throws CustomException {
         eventListService.deleteFromEventList(eventListId,eventId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

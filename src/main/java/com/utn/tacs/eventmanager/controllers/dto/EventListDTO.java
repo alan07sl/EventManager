@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class EventListDTO {
 
-    private Integer id;
+    private String id;
     @NotNull private String name;
 
 }

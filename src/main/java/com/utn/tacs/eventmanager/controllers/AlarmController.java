@@ -34,7 +34,7 @@ public class AlarmController {
 	@PostMapping
 	public ResponseEntity<Object> createAlarm(@Valid @RequestBody AlarmDTO alarm) throws CustomException {
 	    Alarm alarmDAO = orikaMapper.map(alarm, Alarm.class);
-	    alarmDAO.setUser(userService.findCurrentUser());
+	    alarmDAO.setUserId(userService.findCurrentUser().getId());
 	    alarmService.createAlarm(alarmDAO);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}

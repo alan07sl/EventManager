@@ -6,6 +6,8 @@ import com.utn.tacs.eventmanager.dao.EventList;
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.errors.UserExistException;
+import com.utn.tacs.eventmanager.services.AlarmService;
+import com.utn.tacs.eventmanager.services.EventListService;
 import com.utn.tacs.eventmanager.services.UserService;
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Test;
@@ -38,6 +40,12 @@ public class UserControllerTest {
 
 	@MockBean
 	private UserService userService;
+
+	@MockBean
+	private EventListService eventListService;
+
+	@MockBean
+	private AlarmService alarmService;
 
 	@MockBean
 	private MapperFacade orikaMapper;
@@ -85,11 +93,9 @@ public class UserControllerTest {
     public void shouldGetUserId() throws Exception, CustomException {
 
 	    User user = new User("aaa", null);
-	    user.setAlarms(new ArrayList<>());
-        user.setEventsLists(new ArrayList<>());
 
-		Mockito.when(userService.findById(1)).thenReturn(user);
-        mockMvc.perform(get("/users/1"))
+		Mockito.when(userService.findById("A")).thenReturn(user);
+        mockMvc.perform(get("/users/A"))
                 .andExpect(status().isOk());
     }
 
