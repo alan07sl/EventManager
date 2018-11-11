@@ -8,7 +8,7 @@ import java.util.Map;
 @Value
 public class EventsResponseDTO {
 
-    public PaginatedDTO pagination;
-    public List<Map<String,Object>> events;
+    private PaginatedDTO pagination;
+    private List<Map<String,Object>> events;
 
 }
