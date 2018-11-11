@@ -1,11 +1,13 @@
 package com.utn.tacs.eventmanager.services;
 
+import com.mongodb.Mongo;
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.errors.InvalidCredentialsException;
 import com.utn.tacs.eventmanager.errors.UserExistException;
 import com.utn.tacs.eventmanager.errors.UserNotFoundException;
 import com.utn.tacs.eventmanager.repositories.UserRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -24,7 +27,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties="springBootApp.postConstructOff=true")
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserServiceTest {
 
     @Autowired
@@ -32,6 +34,17 @@ public class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private Mongo mongo;
+
+    @Autowired
+    private MongoDbFactory mongoDbFactory;
+
+    @Before
+    public void before() {
+        mongo.dropDatabase(mongoDbFactory.getDb().getName());
+    }
 
     @Test
     public void shouldSuccessSearchPaginatedOfUsers() throws CustomException {
@@ -78,16 +91,16 @@ public class UserServiceTest {
 
     @Test(expected = InvalidCredentialsException.class)
     public void shouldFailOnInvalidEmail() throws CustomException {
-        User user = new User("martin", "1234");
+        User user = new User("martin4", "1234");
         userService.createUser(user);
         userService.authenticateUser("alan", "1234");
     }
 
     @Test(expected = InvalidCredentialsException.class)
     public void shouldFailOnInvalidPassword() throws CustomException {
-        User user = new User("martin", "1234");
+        User user = new User("martin2", "1234");
         userService.createUser(user);
-        userService.authenticateUser("martin", "asdasd");
+        userService.authenticateUser("martin2", "asdasd");
     }
 
     @Test
@@ -96,7 +109,7 @@ public class UserServiceTest {
 
         userRepository.save(user);
 
-        User foundUser = userService.findById(user.getId().intValue());
+        User foundUser = userService.findById(user.getId());
         assertThat(user.getUsername(), equalTo(foundUser.getUsername()));
         assertThat(user.getPassword(), equalTo(foundUser.getPassword()));
     }
@@ -106,7 +119,7 @@ public class UserServiceTest {
         User user = new User("a", "123");
 
         userRepository.save(user);
-        userService.findById(user.getId().intValue() + 22);
+        userService.findById(user.getId() + "22");
 
     }
 }

@@ -7,6 +7,8 @@ import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.repositories.UserRepository;
 import com.utn.tacs.eventmanager.security.JWTRepository;
+import com.utn.tacs.eventmanager.services.AlarmService;
+import com.utn.tacs.eventmanager.services.EventListService;
 import com.utn.tacs.eventmanager.services.UserService;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EventListService eventListService;
+
+    @Autowired
+    private AlarmService alarmService;
 
     @PostMapping
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDTO user) throws CustomException {
@@ -61,12 +69,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserStatsDTO> getById(@PathVariable Integer id) throws CustomException {
+    public ResponseEntity<UserStatsDTO> getById(@PathVariable String id) throws CustomException {
         UserStatsDTO userStats = new UserStatsDTO();
         User user = userService.findById(id);
         userStats.setUsername(user.getUsername());
-        userStats.setAlarms(user.getAlarms().size());
-        userStats.setEventsLists(user.getEventsLists().size());
+        userStats.setAlarms(alarmService.getAlarms(id).size());
+        userStats.setEventsLists(eventListService.getEventsLists(id).size());
         userStats.setLastLogin(user.getLastLogin());
         return new ResponseEntity<>(userStats,HttpStatus.OK);
     }

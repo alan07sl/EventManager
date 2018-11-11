@@ -9,7 +9,10 @@ script:
 - ./mvnw clean install -B
 - ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar org.jacoco:jacoco-maven-plugin:report coveralls:report
 
+services:
+  - mongodb
+
 deploy:
   provider: heroku
   api_key: $HEROKU_API_KEY
-  app: tacs-event-manager
+  app: event-manager-tacs

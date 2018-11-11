@@ -1,27 +1,22 @@
 package com.utn.tacs.eventmanager.dao;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
-import javax.persistence.*;
 
 /**
  * Will save the last 20 interesting events for the user.
  */
 @Data
-@Entity
 public class Event {
 
 	private @Id
-	@GeneratedValue
-	Long id;
-	@Column(length = 1000)
+	String id;
 	private String name;
-	@ManyToOne
-	@JoinColumn(name = "F_USER_ID", referencedColumnName = "ID")
-	private User user;
+	private String userId;
 
-	public Event(String name, User user) {
+	public Event(String name, String user) {
 		this.name = name;
-		this.user = user;
+		this.userId = user;
 	}
 }

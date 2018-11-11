@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Example;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
@@ -19,9 +20,14 @@ class UserSeed {
         User user1 = new User("test1", encoder.encode("test1"));
         user1.setIsAdmin(true);
 
-        return args -> {
-            log.info("Preloading " + repository.save(user1));
-            log.info("Preloading " + repository.save(new User("test2", encoder.encode("test2"))));
-        };
+        if (repository.findAll().size() == 0) {
+            return args -> {
+                log.info("Preloading " + repository.save(user1));
+                log.info("Preloading " + repository.save(new User("test2", encoder.encode("test2"))));
+            };
+        }
+
+        return args -> {};
+
     }
 }

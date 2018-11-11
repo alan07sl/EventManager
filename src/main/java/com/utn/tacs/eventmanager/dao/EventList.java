@@ -1,23 +1,31 @@
 package com.utn.tacs.eventmanager.dao;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Entity
 public class EventList {
 
-    private @Id @GeneratedValue Long id;
+    private @Id
+    String id;
     private @NotNull Date creationDate;
     private String name;
-    private @ElementCollection(fetch = FetchType.EAGER) Set<Long> events;
-    private @ManyToOne User user;
+    private Set<Long> events;
+    private String userId;
 
     public EventList(String name){
         this.name = name;
+    }
+
+    public Set<Long> getEvents() {
+        if(events == null) {
+            events = new HashSet<>();
+        }
+        return events;
     }
 }

@@ -1,9 +1,12 @@
 package com.utn.tacs.eventmanager.repositories;
 
 import com.utn.tacs.eventmanager.dao.Alarm;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.List;
 
 
-public interface AlarmRepository extends JpaRepository<Alarm,Long> {
+public interface AlarmRepository extends MongoRepository<Alarm,Long> {
 
+    public List<Alarm> findByUserId(String userId);
 }

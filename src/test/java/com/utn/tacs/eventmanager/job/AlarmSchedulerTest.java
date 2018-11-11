@@ -37,8 +37,8 @@ public class AlarmSchedulerTest {
 	public void shouldAddEventsTest(){
 		//Given
 		User user = new User("alan", "1234");
-		userRepository.save(user);
-		Alarm alarm = new Alarm("Alarma de Alan", null, user);
+		user = userRepository.save(user);
+		Alarm alarm = new Alarm("Alarma de Alan", null, user.getId());
 
 		when(alarmService.getAlarms()).thenReturn(Arrays.asList(alarm));
 
@@ -53,8 +53,8 @@ public class AlarmSchedulerTest {
 	public void shouldAddEventsWithCriteriaTest(){
 		//Given
 		User user = new User("alan", "1234");
-		userRepository.save(user);
-		Alarm alarm = new Alarm("Alarma de Alan", "StrangerThings", user);
+		user = userRepository.save(user);
+		Alarm alarm = new Alarm("Alarma de Alan", "StrangerThings", user.getId());
 
 		when(alarmService.getAlarms()).thenReturn(Arrays.asList(alarm));
 

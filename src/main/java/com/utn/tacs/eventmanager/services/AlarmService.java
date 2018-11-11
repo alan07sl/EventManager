@@ -34,12 +34,17 @@ public class AlarmService {
     }
 
     public Page<Alarm> searchPaginated(String name, User user, Integer page, Integer size) {
-        Alarm alarm = new Alarm(name.length() > 0 ? name : null, user);
+        Alarm alarm = new Alarm(name.length() > 0 ? name : null, user.getId());
         Pageable pageable = new PageRequest(page - 1, size);
         return alarmRepository.findAll(Example.of(alarm), pageable);
     }
 
     public List<Alarm> getAlarms() {
         return alarmRepository.findAll();
+    }
+
+
+    public List<Alarm> getAlarms(String userId) {
+        return alarmRepository.findByUserId(userId);
     }
 }

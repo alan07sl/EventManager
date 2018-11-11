@@ -38,8 +38,8 @@ public class UserService {
         return userRepository.findAll(Example.of(user), new PageRequest(page - 1, size));
     }
 
-    public User findById(Integer id) throws CustomException {
-        return userRepository.findById(id.longValue()).orElseThrow(() -> new UserNotFoundException());
+    public User findById(String id) throws CustomException {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
     }
 
     public User authenticateUser(String username, String password) throws InvalidCredentialsException {

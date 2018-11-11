@@ -1,5 +1,6 @@
 package com.utn.tacs.eventmanager.services;
 
+import com.utn.tacs.eventmanager.dao.EventList;
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.errors.InvalidCredentialsException;
@@ -7,9 +8,14 @@ import com.utn.tacs.eventmanager.services.dto.EventsResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,203 +36,289 @@ public class TelegramIntegrationService extends TelegramLongPollingBot {
     @Autowired
     private UserService UserService;
 
-    private Map authenticatedChats = new HashMap<Long, User>();
+    private Map<Long,User> authenticatedChats = new HashMap<>();
 
     public void onUpdateReceived(Update update){
 
 
-        chatID = update.getMessage().getChatId();
+        if(update.hasMessage() || update.hasCallbackQuery()) {
+
+            chatID = update.hasMessage() ? update.getMessage().getChatId() : update.getCallbackQuery().getFrom().getId();
+
+            if(update.hasMessage()) {
+                processMessage(update);
+            } else {
+                processCallback(update);
+            }
+        }
+
+    }
+
+    public void processMessage(Update update) {
         String commandLine = update.getMessage().getText();
+        List<String> params = parseCommand(commandLine);
+        String command = commandLine.split(" ")[0];
 
-        List<String> parametros = parsearComando(commandLine);
-
-        switch(commandLine.split(" ")[0]) {
+        switch(command) {
             case "/login":
-                login(parametros);
+                login(params);
                 break;
             case "/start":
-                mandarMensaje("Bienvenido, ingrese su usuario y contraseña para poder loguearse y acceder a los servicios de EventManager. \n" +
-                        "Los comandos disponibles son :\n" +
-                        "login - Loguearse\n" +
-                        "buscarevento - Buscar Evento\n" +
-                        "agregarevento - Agregar evento\n" +
-                        "revisareventos - Revisar eventos de una lista de eventos\n" +
-                        "logout - Desloguearse ");
+                sendMessage("Welcome to Event Manager Telegram Bot! \n" +
+                        "Available commands are:\n" +
+                        "- /login <username> <password> -> Login\n" +
+                        "- /search <criteria> -> Search Events\n" +
+                        "- /lists  -> Get own lists\n" +
+                        "- /logout -> Logout ");
                 break;
-            case "/buscarevento":
-                buscarEvento(parametros);
+            case "/search":
+                searchEvents(params);
                 break;
-            case "/agregarevento":
-                agregarEvento(parametros);
-                break;
-            case "/revisareventos":
-                revisarEventosDeUnaLista(parametros);
+            case "/lists":
+                searchLists(null);
                 break;
             case "/logout":
                 logout();
                 break;
             default:
-                mandarMensaje("Comando incorrecto");
+                sendMessage("Command unknown");
                 break;
         }
+    }
 
+    public void processCallback(Update update) {
+        String commandLine = update.getCallbackQuery().getData();
+        List<String> params = parseCommand(commandLine);
+        String command = commandLine.split(" ")[0];
+
+
+        switch(command) {
+            case "/search":
+                searchEvents(params);
+                break;
+            case "/getEvents":
+                getEventsFromList(params);
+                break;
+            case "/addEvent":
+                searchLists(params.get(0));
+                break;
+            case "/addEventToList":
+                addEventToList(params.get(0), params.get(1));
+                break;
+            default:
+                sendMessage("Callback unknown");
+                break;
+        }
     }
 
     private void logout() {
         if(authenticatedChats.containsKey(chatID)) {
             authenticatedChats.remove(chatID);
-            mandarMensaje("Logout exitoso.");
+            sendMessage("Goodbye !");
         } else {
-            mandarMensaje("No estabas logeado.");
+            sendMessage("You are already logout");
         }
     }
 
-    private void revisarEventosDeUnaLista(List<String> parametros) {
-        if(authenticatedChats.containsKey(chatID)){
-            if (parametros.size() == 1) {
-                int eventListId = Integer.parseInt(parametros.get(0));
-                Map<String,Object> event = new HashMap<>();
-                try {
-                    StringBuilder sb = new StringBuilder();
-                    eventListService.findById(eventListId).getEvents().forEach(e -> {
-                        try {
-                            appendRelevant(eventbriteService.getEvent(e.longValue()), sb);
-                        } catch (CustomException e1) {
-                            e1.printStackTrace();
-                        }
-                    });
-                    mandarMensaje(sb.toString());
-
-                }catch(CustomException e){
-
-                    mandarMensaje(e.getMessage());
-
-                }
-            } else
-                mandarMensaje("Revisar eventos recibe solo un parametro, el id de la lista de eventos a revisar.");
-
-        } else
-            mandarMensaje("Debe loguearse primero");
-    }
-
-    private void agregarEvento(List<String> parametros) {
-        if(authenticatedChats.containsKey(chatID)){
-            if(parametros.size() == 2){
-
-                Integer EventListId =  Integer.parseInt(parametros.get(0));
-                Long EventID=  Long.parseLong(parametros.get(1));
-
-                try{
-
-                    eventListService.addEvent(EventListId,EventID, (User) authenticatedChats.get(chatID));
-                    mandarMensaje("Evento agregado correctamente a tu lista.");
-
-                }catch(CustomException e){
-                    mandarMensaje(e.getMessage());
-                }
-
-            }
-            else
-                mandarMensaje("Agregar evento recibe solo 2 parametros, donde el primero es el id de la lista y el segundo es el id del evento a agregar");
-
-        }else
-            mandarMensaje("Debe loguearse primero");
-    }
-
-    private void buscarEvento(List<String> parametros) {
+    private void searchEvents(List<String> params) {
         if(authenticatedChats.containsKey(chatID)) {
-
-            if(parametros.size() == 1){
+            if(params.size() >= 1){
                 try{
 
-                    EventsResponseDTO response = eventbriteService.getEvents("1",parametros.get(0));
-                    if(response.events.isEmpty()){
-                        mandarMensaje("No hay eventos con ese criterio de busqueda.");
+                    EventsResponseDTO response = eventbriteService.getEvents(params.size() == 2 ? params.get(1) : "1", params.get(0));
+                    if(response.getEvents().isEmpty()){
+                        sendMessage("Events not found with criteria "+ params.get(0));
                     } else {
+                    	response.getEvents().forEach(e -> {
+                            List<InlineKeyboardButton> buttons = new ArrayList<>();
 
-                    	StringBuilder sb = new StringBuilder();
-                    	response.events.subList(0,10).forEach(e -> appendRelevant(e,sb));
-                    	sb.append("Recuerde que puede guardar cualquier evento que le interese utilizando el comando " +
-								"/agregarevento seguido del ID de su lista de eventos y el ID del evento que le interese " +
-								"que podra encontrar en esta misma lista.\n" +
-								"Por ejemplo: /agregarevento 1234123 23567892");
+                            InlineKeyboardButton addEvent = new InlineKeyboardButton().setText("Add event to list").setCallbackData("/addEvent "+e.get("id"));
+                            buttons.add(addEvent);
 
-						mandarMensaje(sb.toString());
+                            sendListMessageFormatted(
+                                    getEventMessage(e),
+                                    "/search "+params.get(0),
+                                    buttons,
+                                    response.getPagination().getPageNumber(),
+                                    response.getPagination().hasMoreItems(),
+                                    response.getEvents().indexOf(e) == (response.getEvents().size() - 1));
+                    	});
+
                     }
+                } catch (CustomException e){
+                    sendErrorMessage();
+                }
+            } else {
+                sendMessage("Search command require one parameter /search <criteria>");
+            }
+        } else {
+            sendLoginRequired("/search");
+        }
+    }
 
-                }catch (CustomException e){
+    private void addEventToList(String listId, String eventId) {
+        try{
+            User user = authenticatedChats.get(chatID);
+            eventListService.addEvent(listId, Long.valueOf(eventId), user);
+            sendMessage("Event added to list !");
+        } catch (CustomException e){
+            sendErrorMessage();
+        }
+    }
 
-                    mandarMensaje(e.getMessage());
+    private void searchLists(String eventId) {
+        if(authenticatedChats.containsKey(chatID)) {
+            try{
+                User user = authenticatedChats.get(chatID);
+                List<EventList> lists = eventListService.getEventsLists(user.getId());
+                if(lists.isEmpty()){
+                    sendMessage("No lists found for "+user.getUsername());
+                } else {
+                    lists.forEach(list -> {
+
+                        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInline = new ArrayList<>();
+
+                        InlineKeyboardButton getEventsButton = new InlineKeyboardButton().setText("Get events").setCallbackData("/getEvents "+list.getId());
+                        rowInline.add(getEventsButton);
+
+                        if(eventId != null){
+                            InlineKeyboardButton addEventToList = new InlineKeyboardButton().setText("Add event to list").setCallbackData("/addEventToList "+list.getId()+ " "+ eventId);
+                            rowInline.add(addEventToList);
+                        }
+
+                        rowsInline.add(rowInline);
+                        sendMessageWithButtons(getEventListMessage(list),rowsInline);
+                    });
 
                 }
-            }else {
-                mandarMensaje("Buscar evento recibe solo 1 parametro, que indica el criterio de busqueda");
-
+            } catch (CustomException e){
+                sendErrorMessage();
             }
-        }else{
-
-            mandarMensaje("Debe loguearse primero");
+        } else {
+            sendLoginRequired("/lists");
         }
     }
 
-	private void appendRelevant(Map<String,Object> e, StringBuilder sb) {
-		sb.append("Nombre: ");
-    	sb.append(((Map)e.get("name")).get("text"));
-		sb.append("\n");
-		sb.append("Id: ");
-		sb.append(e.get("id"));
-		sb.append("\n");
-		sb.append("Link: ");
-		sb.append(e.get("url"));
-		sb.append("\n");
-		sb.append("---------------------------------");
-		sb.append("\n");
-	}
+    private void getEventsFromList(List<String> params) {
+        try{
+            EventList list = eventListService.findById(params.get(0));
+            if(list.getEvents().isEmpty()){
+                sendMessage("No events found for list "+list.getName());
+            } else {
+                eventbriteService.getEvents(list.getEvents()).forEach(e -> {
+                    sendMessage(getEventMessage(e));
+                });
+            }
+        } catch (CustomException e){
+            sendErrorMessage();
+        }
+    }
 
-	private void login(List<String> parametros) {
-        if(parametros.size() < 2)
-            mandarMensaje("Please set your username and password to login");
-        else{
+    private String getEventListMessage(EventList e) {
+        return "Name: *"+e.getName()+"*\n\n";
+    }
+
+    private String getEventMessage(Map<String,Object> e) {
+        return "Name: ```" +((Map)e.get("name")).get("text") + "```\n[Link to Eventbrite]("+e.get("url")+")\n\n";
+    }
+
+	private void login(List<String> params) {
+        if (params.size() < 2){
+            sendMessage("Login command require two parameters /login <username> <password>");
+        } else {
             try{
-                User user = UserService.authenticateUser(parametros.get(0),parametros.get(1));
+                User user = UserService.authenticateUser(params.get(0),params.get(1));
                 authenticatedChats.put(chatID, user);
-                mandarMensaje("Login Exitoso");
+                sendMessage("Welcome "+user.getUsername()+ " !");
             }catch(InvalidCredentialsException e){
-                mandarMensaje("Credenciales erroneas, por favor vuelva a ingresarlas");
+                sendMessage("Incorrect username/password");
             }
         }
     }
 
-    public void mandarMensaje(String message){
+    public void sendListMessageFormatted(String message, String baseCommand, List<InlineKeyboardButton> inlineButtons, Integer actualPage, boolean hasMorePages, boolean lastItem) {
+        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+        List<InlineKeyboardButton> rowInline = new ArrayList<>();
 
+        if(lastItem){
+            InlineKeyboardButton nextButton = new InlineKeyboardButton().setText("Next Page").setCallbackData(baseCommand + " " + (actualPage + 1));
+            InlineKeyboardButton prevButton = new InlineKeyboardButton().setText("Prev Page").setCallbackData(baseCommand + " " + (actualPage - 1));
+
+            if (actualPage > 1) {
+                rowInline.add(prevButton);
+            }
+
+            if (hasMorePages) {
+                rowInline.add(nextButton);
+            }
+        }
+
+        rowsInline.add(inlineButtons);
+        rowsInline.add(rowInline);
+
+        sendMessageWithButtons(message, rowsInline);
+    }
+
+    public SendMessage getMessage(String message) {
         SendMessage msg = new SendMessage();
         msg.setText(message);
         msg.setChatId(chatID);
+        msg.setParseMode(ParseMode.MARKDOWN);
+        msg.disableNotification();
+
+        return msg;
+    }
+
+    public void sendMessage(String message){
+        SendMessage msg = getMessage(message);
         try {
             execute(msg);
         }catch (TelegramApiException e){
             e.printStackTrace();
         }
-
     }
 
+    public void sendMessageWithButtons(String message,List<List<InlineKeyboardButton>> rowsInline){
+        SendMessage msg = getMessage(message);
+
+        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+        markupInline.setKeyboard(rowsInline);
+        msg.setReplyMarkup(markupInline);
+
+        try {
+            execute(msg);
+        }catch (TelegramApiException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void sendErrorMessage() {
+        sendMessage("Ops! Something fail, try later");
+    }
+
+    public void sendLoginRequired(String command) {
+        sendMessage("Login required for command "+ command);
+    }
+
+
     public String getBotUsername() {
-        return "EventManager" ;
+        return "EventManager";
     }
 
     public String getBotToken() {
-        return "625563171:AAFyoxqMiAua2gLEGVRYcYF00KhAa2aYyG0";
+        return "630953912:AAEG844Bh3BFhUExnxOzKAPphwzF8LMq68k";
     }
 
-    private List<String> parsearComando(String comando){
-        List<String> parametros = new ArrayList<String>() ;
-        String[] param = comando.split(" ");
+    private List<String> parseCommand(String command){
+        List<String> params = new ArrayList<>() ;
+        String[] param = command.split(" ");
         for(String item : param) {
             if (!item.contains("/"))
-                parametros.add(item);
+                params.add(item);
         }
 
-        return parametros;
+        return params;
     }
 
 

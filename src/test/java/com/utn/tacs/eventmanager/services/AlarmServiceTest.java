@@ -1,17 +1,20 @@
 package com.utn.tacs.eventmanager.services;
 
+import com.mongodb.Mongo;
 import com.utn.tacs.eventmanager.dao.Alarm;
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.AlarmExistException;
 import com.utn.tacs.eventmanager.errors.CustomException;
 import com.utn.tacs.eventmanager.repositories.AlarmRepository;
 import com.utn.tacs.eventmanager.repositories.UserRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -33,20 +36,32 @@ public class AlarmServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private Mongo mongo;
+
+    @Autowired
+    private MongoDbFactory mongoDbFactory;
+
+    @Before
+    public void before() {
+        mongo.dropDatabase(mongoDbFactory.getDb().getName());
+    }
+
+
     @Test
     public void shouldCreateAlarm() throws CustomException {
         User user = new User("alan", "1234");
-        userRepository.save(user);
+        user = userRepository.save(user);
 
-        alarmService.createAlarm(new Alarm("Alarma de Alan", null, user));
-        assertThat(alarmRepository.exists(Example.of(new Alarm("Alarma de Alan", null, user))), equalTo(true));
+        alarmService.createAlarm(new Alarm("Alarma de Alan", null, user.getId()));
+        assertThat(alarmRepository.exists(Example.of(new Alarm("Alarma de Alan", null, user.getId()))), equalTo(true));
     }
 
     @Test
     public void shouldFailCreateAlarmBecauseAlreadyExist() throws CustomException {
         User user = new User("alan", "1234");
-        userRepository.save(user);
-        Alarm alarm = new Alarm("Alarma de Alan", null, user);
+        user = userRepository.save(user);
+        Alarm alarm = new Alarm("Alarma de Alan", null, user.getId());
         alarmService.createAlarm(alarm);
         try{
             alarmService.createAlarm(alarm);

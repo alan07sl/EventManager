@@ -104,14 +104,14 @@ public class EventListControllerTest {
         events.addAll(Arrays.asList(1L,2L,3L,4L));
         eventList.setEvents(events);
 
-        Mockito.when(eventListService.findById(1)).thenReturn(eventList);
+        Mockito.when(eventListService.findById("A")).thenReturn(eventList);
 
         EventList eventList2 = new EventList("b");
         eventList2.setEvents(events);
 
-        Mockito.when(eventListService.findById(2)).thenReturn(eventList2);
+        Mockito.when(eventListService.findById("B")).thenReturn(eventList2);
 
-		mockMvc.perform(get("/events_lists/match?eventListId1=1&eventListId2=2"))
+		mockMvc.perform(get("/events_lists/match?eventListId1=A&eventListId2=B"))
 				.andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"));
 
@@ -120,7 +120,7 @@ public class EventListControllerTest {
 	@Test
 	public void shouldSearchEventList() throws Exception {
         EventList result1 = new EventList("r1");
-        result1.setId(1L);
+        result1.setId("1");
 
         Page<EventList> result = new PageImpl<>(Arrays.asList(result1));
 
@@ -143,7 +143,7 @@ public class EventListControllerTest {
 	    events.addAll(Arrays.asList(1L,2L,3L,4L));
 	    eventList.setEvents(events);
 
-        Mockito.when(eventListService.findById(1)).thenReturn(eventList);
+        Mockito.when(eventListService.findById("A")).thenReturn(eventList);
 
         List<Map<String,Object>> list = new ArrayList<>();
 
@@ -158,7 +158,7 @@ public class EventListControllerTest {
 
         Mockito.when(eventbriteService.getEvents(events)).thenReturn(list);
 
-        mockMvc.perform(get("/events_lists/1/events"))
+        mockMvc.perform(get("/events_lists/A/events"))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.[:1].id").value(1))
                 .andExpect(jsonPath("$.[1:2].id").value(2))

@@ -36,7 +36,7 @@ public class EventbriteService {
     @Autowired
     private AsyncRestTemplate asyncRestTemplate;
 
-    public EventsResponseDTO getEvents(String page, String query, boolean justRecentEvents) throws CustomException{
+    public EventsResponseDTO getEvents(String page, String query, boolean justRecentEvents, Integer size) throws CustomException{
 
         UriComponentsBuilder builder;
 
@@ -60,6 +60,10 @@ public class EventbriteService {
         } catch(HttpClientErrorException e) {
             throw new CustomException(e.getMessage(),e.getLocalizedMessage(),e.getStatusCode());
         }
+    }
+
+    public EventsResponseDTO getEvents(String page, String query, boolean justRecentEvents) throws CustomException {
+        return getEvents(page, query, justRecentEvents, 10);
     }
 
     public EventsResponseDTO getEvents(String page, String query) throws CustomException {
