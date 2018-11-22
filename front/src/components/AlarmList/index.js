@@ -8,6 +8,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import popupService from '../../services/popupService';
 import apiService from '../../services/apiService';
+import PopupList from '../PopupList';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import noContentImage from '../../assets/no_content.jpg';
 
 class AlarmList extends React.Component {
 
@@ -70,6 +74,24 @@ class AlarmList extends React.Component {
             <div className="list-row" key={item.id}>
               <a className="item">{item.name}</a>
               <div>
+                <Button aria-label="View" onClick={() => this[`popupAlarmList${item.id}`].open()}>
+                  <ViewIcon />
+                </Button>
+                <PopupList
+                  ref={instance => {
+                    this[`popupAlarmList${item.id}`] = instance;
+                  }}
+                  title="Events"
+                  itemsService={apiService.getEventsForAlarm(item.id)}
+                  itemMapper={event => (
+                    <ListItem key={event.id}>
+                      <img className="image" src={event.logo ? event.logo.url : noContentImage} />
+                      <ListItemText primary={event.name.text} />
+                      <div>
+                      </div>
+                    </ListItem>
+                  )}
+                />
                 <Button onClick={this.deleteAlarm(item.id)}>
                   <DeleteIcon />
                 </Button>

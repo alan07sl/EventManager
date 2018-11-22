@@ -29,7 +29,7 @@ public class AlarmService {
 
     }
 
-    public void deleteAlarm(Long id) {
+    public void deleteAlarm(String id) {
         alarmRepository.deleteById(id);
     }
 

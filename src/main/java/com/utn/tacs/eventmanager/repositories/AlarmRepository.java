@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 
-public interface AlarmRepository extends MongoRepository<Alarm,Long> {
+public interface AlarmRepository extends MongoRepository<Alarm,String> {
 
     public List<Alarm> findByUserId(String userId);
 }

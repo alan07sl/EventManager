@@ -35,13 +35,15 @@ public class AlarmScheduler {
 	@Scheduled(cron = EVERYDAY_AFTERNOON)
 	public final void activateAlarms() {
 
+		eventService.clearEvents();
+
 		List<Alarm> alarms = alarmService.getAlarms();
 
 		for (Alarm alarm : alarms) {
 			try {
 				EventsResponseDTO events = eventbriteService.getEvents("1", alarm.getCriteria());
 
-				events.getEvents().forEach((map) -> eventService.addEvent(new Event(((LinkedHashMap)map.get("name")).get("text").toString(), alarm.getUserId())));
+				events.getEvents().subList(0, 20).forEach((map) -> eventService.addEvent(new Event(Long.valueOf(map.get("id").toString()), alarm.getUserId(), alarm.getId())));
 
 			} catch (CustomException e) {
 				e.printStackTrace();

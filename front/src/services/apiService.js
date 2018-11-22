@@ -106,6 +106,11 @@ const getEventListMatch = (eventId1, eventId2) =>
     method: 'GET'
   }).then(res => res.json());
 
+const getEventsForAlarm = alarmId => () =>
+  requestUrl(`/alarms/${alarmId}/events`, {
+    method: 'GET'
+  }).then(res => res.json());
+
 const logout = () =>
   requestUrl(`/users/logout`, {
     method: 'DELETE'
@@ -204,5 +209,6 @@ export default {
   createAlarm,
   deleteAlarm,
   getLists,
-  getEventListMatch
+  getEventListMatch,
+  getEventsForAlarm
 };
