@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import com.utn.tacs.eventmanager.controllers.dto.AlarmDTO;
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.dao.Alarm;
+import com.utn.tacs.eventmanager.job.AlarmScheduler;
 import com.utn.tacs.eventmanager.services.AlarmService;
+import com.utn.tacs.eventmanager.services.EventService;
+import com.utn.tacs.eventmanager.services.EventbriteService;
 import com.utn.tacs.eventmanager.services.UserService;
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Test;
@@ -38,6 +41,15 @@ public class AlarmControllerTest {
 
 	@MockBean
 	private UserService userService;
+
+	@MockBean
+	private AlarmScheduler alarmScheduler;
+	
+	@MockBean
+	private EventService eventService;
+
+	@MockBean
+	private EventbriteService eventbriteService;
 
 	@Autowired
 	private MapperFacade orikaMapper;

@@ -3,9 +3,13 @@ package com.utn.tacs.eventmanager.controllers;
 import com.utn.tacs.eventmanager.controllers.dto.AlarmDTO;
 import com.utn.tacs.eventmanager.controllers.dto.ListDTO;
 import com.utn.tacs.eventmanager.dao.Alarm;
+import com.utn.tacs.eventmanager.dao.Event;
 import com.utn.tacs.eventmanager.dao.User;
 import com.utn.tacs.eventmanager.errors.CustomException;
+import com.utn.tacs.eventmanager.job.AlarmScheduler;
 import com.utn.tacs.eventmanager.services.AlarmService;
+import com.utn.tacs.eventmanager.services.EventService;
+import com.utn.tacs.eventmanager.services.EventbriteService;
 import com.utn.tacs.eventmanager.services.UserService;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,6 +37,28 @@ public class AlarmController {
     @Autowired
     private UserService userService;
 
+	@Autowired
+	private EventService eventService;
+
+	@Autowired
+	private AlarmScheduler alarmScheduler;
+
+    @Autowired
+    private EventbriteService eventbriteService;
+
+
+	@PostMapping("/schedule")
+	public ResponseEntity<Object> scheduleAlarms() {
+		alarmScheduler.activateAlarms();
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@GetMapping("/{id}/events")
+	public ResponseEntity<List<Map<String,Object>>> getEventsAlarm(@PathVariable String id) throws CustomException {
+	    List<Event> eventsAlarm = eventService.getEventsForAlarm(id, userService.findCurrentUser().getId());
+		return new ResponseEntity<>(eventbriteService.getEvents(eventsAlarm.stream().map(e -> e.getEventId()).collect(Collectors.toList())), HttpStatus.OK);
+	}
+
 	@PostMapping
 	public ResponseEntity<Object> createAlarm(@Valid @RequestBody AlarmDTO alarm) throws CustomException {
 	    Alarm alarmDAO = orikaMapper.map(alarm, Alarm.class);
@@ -40,8 +68,8 @@ public class AlarmController {
 	}
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteAlarm(@PathVariable Integer id) {
-        alarmService.deleteAlarm(id.longValue());
+    public ResponseEntity<Object> deleteAlarm(@PathVariable String id) {
+        alarmService.deleteAlarm(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

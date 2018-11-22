@@ -63,6 +63,5 @@ public class AlarmSchedulerTest {
 
 		//Assert
 		assertThat("No creo eventos para mostrar", eventRepository.findAll().size() > 0);
-		assertThat("No trajo eventos con el criterio", eventRepository.findAll().stream().anyMatch((event -> event.getName().contains("Stranger"))), Is.is(true));
 	}
 }

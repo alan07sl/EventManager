@@ -10,13 +10,19 @@ import org.springframework.data.annotation.Id;
 @Data
 public class Event {
 
-	private @Id
-	String id;
-	private String name;
+	private @Id String id;
+	private Long eventId;
 	private String userId;
+	private String alarmId;
 
-	public Event(String name, String user) {
-		this.name = name;
-		this.userId = user;
+	public Event(Long eventId, String userId, String alarmId) {
+		this.eventId = eventId;
+		this.userId = userId;
+		this.alarmId = alarmId;
 	}
+
+    public Event(String userId, String alarmId) {
+        this.userId = userId;
+        this.alarmId = alarmId;
+    }
 }

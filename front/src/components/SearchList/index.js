@@ -15,8 +15,13 @@ class SearchList extends React.Component {
       page: null,
       isLoading: false,
       isError: false,
-      startIndex: this.props.startIndex || 0
+      startIndex: this.props.startIndex || 0,
+      searchOnInit: this.props.searchOnInit || true
     };
+  }
+
+  componentDidMount = () => {
+    if(this.state.searchOnInit) this.reset();
   }
 
   onInitialSearch = e => {
